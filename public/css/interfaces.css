@@ -1,0 +1,208 @@
+
+/*-------------------interface1-------------------*/
+
+    #annot
+    {
+        display: flex;
+        flex-wrap: wrap;
+        width: 100%;
+        margin-top: 5%;
+    }
+
+    #cat
+    {
+        margin: auto;
+        font-weight: bold;
+        font-size: 20px;
+    }
+
+    #cat label
+    {
+        padding-bottom: 15px;
+        margin-left: 0px;
+    }
+
+    #div_cat
+    {
+        position: absolute;
+        left: 70%;
+    }
+
+    #images
+    {
+        width: 50vw;
+        border-right: solid black 2px;
+    }
+
+    #images_sim_1
+    {
+        width: 40vw;
+        /*border-right: solid black 2px;*/
+    }
+
+    #images_sim_2
+    {
+        width: 40vw;
+        /*margin-left: 30%;*/
+    }
+
+
+    #imageAnnot
+    {
+        position: relative;
+        text-align: center;
+        max-width: 80%;
+        height: 25vw;
+    }
+
+    .imageAnnot_sim
+    {
+        position: relative;
+        text-align: center;
+        max-width: 80%;
+        height: 25vw;
+    }
+
+    .error
+    {
+        color: red;
+        font-weight: bold;
+        font-size: 30px;
+    }
+
+    #timer,#nb_annot_limit
+    {
+        position: absolute;
+        top: 90px;
+        right: 2%;
+        color: white;
+        font-weight: bold;
+    }
+
+    #message
+    {
+        display: inline-block;
+        max-width: 40%;
+        margin: 20px auto 20px auto;
+        padding: 20px;
+        font-size: 1.3em;
+        font-weight: bold;
+        color: white;
+        background-color: grey;
+        border-radius: 20px;
+    }
+
+    @media all and (max-width: 700px)
+    {
+
+        #annot
+        {
+            width: 40%;
+            margin-top: 0;
+            margin-left: 25%;
+        }  
+
+        #images
+        {
+            width: 50vw;
+            border-right: 0px;
+        }
+
+        #div_cat
+        {
+            position: absolute;
+            left: 30%;
+        }
+    }
+
+    @media all and (max-width: 1600px)
+    {
+
+        #annot
+        {
+            margin-top: 5%;    
+        }  
+    }
+
+
+            
+
+/*-----------interface2------------*/
+
+	.image
+	{
+	    width: 340px;
+	    height: 224px;
+	}
+
+	.choice
+	{
+	    padding: 7%;
+	}
+
+	.choice_pointer
+	{
+	    cursor: pointer;
+	}
+
+
+	.big
+	{
+	    display: flex;
+	    flex-wrap: wrap;
+	    margin-top: 10%;
+	    margin-left: 25%;
+	    padding-bottom: 40px;
+	    text-align: center;
+	}
+
+	#dont_know
+	{
+	    margin-left: 12px;
+	}
+            
+
+            
+/*----------------interface3---------------*/
+    
+    .imageAnnot_triple
+    {
+        position: relative;
+        max-width: 80%;
+        height: 15vw;
+        margin-left: 10vw;
+    }
+
+    #images_triple
+    {
+        display: flex;
+        flex-wrap: wrap;
+        text-align: center;
+        /*margin-left: 25%;*/
+        margin-top: 1%;
+    }
+
+    .choice_triple
+    {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-top: 2%;
+    }
+
+    .triple_choice_div
+    {
+        margin-bottom: 5%;
+        margin-left: 5%;
+    }
+
+    .img_trpl_div
+    {
+        width: 33%;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+
+
