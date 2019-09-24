@@ -1,0 +1,30 @@
+BootStrap: docker
+From: alpine:3.10.2
+%post
+    apk update
+    apk add git
+
+    rm -rf AnnotateMe
+    git clone https://github.com/albenoit/AnnotateMe.git
+    echo "Installation done, listing home files:"
+    ls
+
+%runscript
+    echo "YES, my container runs! TODO: launch the web server !"
+
+%help
+   This is a virtual machine to run the Laravel based Data annotation tool developped for LISTIC Lab, Annecy, France by students from Computer Science Dept of IUT Annecy, Universite Savoie Mont Blanc
+   Addityionnal packages should be located from https://pkgs.alpinelinux.org/packages and installed using the 'apk add' command
+
+   This demo script is inspired by a docker cntainer build tutorial : https://blog.pusher.com/docker-for-development-laravel-php/
+
+   TODO: why not starting from this to build up the full container and distribute the Annotation tool
+   For now, you can :
+   0. read the singularity doc and tutorials: https://sylabs.io/docs/ and install it
+   1. build the image using command line as root on your machine : build annotation_laravel.sif annotation_laravel.def
+   2. run it :
+       -> as a shell : singularity shell annotation_laravel.sif
+       -> as a program : singularity run annotation_laravel.sif
+              --> this will show you the message defined in the runscript command:  "YES, my container runs! TODO: launch the web server !"
+%labels
+    Computer Science Dept of IUT Annecy, Universite Savoie Mont Blanc, FRANCE, Sept 2019
