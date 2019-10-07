@@ -4,8 +4,8 @@
 
 @section('content')
 
-    <a id="back_btn" href="{{url('/list/')}}">❮ Back</a>
-    <form style="display: inline-grid;" id="" method="post" action="{{url('/list\/')}}{{$exp->id_exp}}/update-confirmed">
+    <a id="back_btn" href="{{url(route('account_experts_list'))}}">❮ Back</a>
+    <form style="display: inline-grid;" id="" method="post" action="{{url('route('account_experts_expert_update_confirmed',['id_exp' => $exp]))}}">
         <input type="hidden" name="_token" value="{{ csrf_token() }}" >
         @csrf
         

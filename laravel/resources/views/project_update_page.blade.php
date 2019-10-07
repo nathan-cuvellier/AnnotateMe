@@ -17,10 +17,10 @@
 
     <!-- Check if the user connected -->
     @if (session()->get('typeExp') != NULL && session()->get('typeExp') == true) 
-        <a id="back_btn" href="{{url('/projects/')}}">❮ Back</a><br>
+        <a id="back_btn" href="{{url(route('projects_list'))}}">❮ Back</a><br>
 
         <h1>Update Project</h1><br>
-        <form id="form_project" method="post" action="{{url('/projects\/')}}{{$project[0]->id_prj}}/update-confirmed" enctype="multipart/form-data">
+        <form id="form_project" method="post" action="{{url(route('projects_project_update_confirmed',['id_prj' => $project[0]]))}}" enctype="multipart/form-data">
             @csrf
             <input class="input account" type="hidden" name="_token" id="token" value="{{csrf_token()}}">
 
@@ -100,7 +100,7 @@
     <!-- If the user isn't connected, access blocked and he's invited to log on -->
     @else
         <h1 style="color:red;">You are not connected</h1>
-        <a id="back_btn" href="{{url('/')}}">❮ Log in</a><br>
+        <a id="back_btn" href="{{url(route('auth'))}}">❮ Log in</a><br>
     @endif
 
 @endsection

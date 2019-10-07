@@ -17,7 +17,7 @@
 
         <a id="back_btn" href="{{url('/projects/')}}">❮Back</a>
         <h1>Create account</h1><br>
-        <form id="" method="post" action="{{ route('save') }}"><input type="hidden" name="_token" value="{{ csrf_token() }}" >
+        <form id="" method="post" action="{{ route('account_save') }}"><input type="hidden" name="_token" value="{{ csrf_token() }}" >
             @csrf
             <label for="name_exp">Lastname</label>
             <input class="input account" type="text" name="name_exp" value="{{old('name_exp')}}">

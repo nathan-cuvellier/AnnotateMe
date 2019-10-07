@@ -2,7 +2,7 @@
 
 @section('content')
 	
-	<form method="post" action="{{ url('/projects\/')}}{{$prj->id_prj}}/classification/valide" > 
+		<form method="post" action="{{url(route('projects_project_simple_classification_validate',['id_prj' => $prj]))}}" > 
 		<input type="hidden" name="_token" value="{{ csrf_token() }}" >
 		<input type="hidden" name="elements[]" value="{{$elements[0]->id_data}}" >
 		<input type="hidden" name="id" value="{{$prj->id_prj}}" >

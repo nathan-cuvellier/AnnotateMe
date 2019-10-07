@@ -3,7 +3,7 @@
 
 @section('content')
     
-  <form method="post" action="{{ url('/projects\/')}}{{$prj->id_prj}}/pairwise/valide"> 
+  <form method="post" action="{{ url(route('projects_project_double_classification_validate',['id_prj' => $prj]))}}"> 
     <input type="hidden" name="_token" value="{{ csrf_token() }}" >
     @foreach($elements as $aEle)
       <input type="hidden" name="elements[]" value="{{$aEle->id_data}}" >
