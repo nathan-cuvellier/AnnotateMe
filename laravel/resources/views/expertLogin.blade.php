@@ -3,12 +3,12 @@
 
 	if (session()->get('typeExp') != NULL && (session()->get('typeExp') == "admin" || session()->get('typeExp') == "superadmin")) 
 	{
-        echo "<a id='create_account' href=\"".url('register')."\">Créer un compte</a>";
+        echo "<a id='create_account' href=\"".url(route('account_register'))."\">Créer un compte</a>";
     }
 
     if (session()->get('typeExp') != NULL && session()->get('typeExp') == true)
     {
-        echo "<a id='deco' href=\"".url('logout')."\">Déconnexion</a>";
+        echo "<a id='deco' href=\"".url(route('account_logout'))."\">Déconnexion</a>";
     }
 	
 
@@ -18,7 +18,7 @@
 	@if (session()->get('typeExp') == NULL)
 		<h1>Welcome !</h1><br>
 		<h2>Please login to your account: </h2><br>
-		<form method="post" action="{{ route('check') }}">
+		<form method="post" action="{{ route('account_check') }}">
 
 
 			<?php

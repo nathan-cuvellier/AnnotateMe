@@ -15,9 +15,9 @@
 </style>
 <script type="text/javascript" src="{{ URL::asset('js/createProject.js') }}"></script>
 
-        <a id="back_btn" href="{{url('/projects/')}}">❮ Back</a><br>
+        <a id="back_btn" href="{{url(route('projects_list'))}}">❮ Back</a><br>
         <h1>Create Project</h1><br>
-        <form id="form_project" method="post" action="{{ url('projectSave') }}" enctype="multipart/form-data">
+        <form id="form_project" method="post" action="{{ url(route('projects_save')) }}" enctype="multipart/form-data">
             @csrf
             <input class="input account" type="hidden" name="_token" id="token" value="{{csrf_token()}}">
             <label for="name_prj">Name</label>

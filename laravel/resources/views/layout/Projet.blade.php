@@ -15,13 +15,6 @@
 
         <!-- Styles -->
         <style>
-           
- 
-
-
-
-
-            
 
         </style>
 
@@ -101,7 +94,7 @@
                 //     echo "<a id='create_compte' href=\"".url('register')."\">Créer un compte</a>";
                 // }
                 if (session()->get('loginExp') == NULL) {
-                    echo "<a href=\"".url('login')."\"></a>";
+                    echo "<a href=\"".url(route('account_login'))."\"></a>";
                 } else {
                     echo "<p id='show_account'>Connect as ".session()->get('loginExp')."</p>";
                     // echo "<a id='deco' href=\"".url('logout')."\">Se déconnecter</a>";

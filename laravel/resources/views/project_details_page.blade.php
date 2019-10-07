@@ -15,7 +15,7 @@
 
 	<!-- Check if the user connected -->
 	@if (session()->get('typeExp') != NULL && session()->get('typeExp') == true)
-		<a id="back_btn" href="{{url('/projects/')}}">❮ Back</a><br>
+		<a id="back_btn" href="{{url(route('projects_list'))}}">❮ Back</a><br>
 
 		<!-- Name of the project -->
 		<h1>{{$project->name_prj}}</h1>
@@ -44,20 +44,20 @@
         @endforeach
         
         <!-- Project update page button -->
-        <form action="{{url('/projects\/')}}{{$project->id_prj}}/update">
+        <form action="{{url(route('projects_project_update',['id_prj' => $project]))}}">
 			<input type="submit" class="myButton" value="Update"></input>
 		</form>
 
 		<!-- Start data annotation -->
 		<h1 id="title_annotate" style="margin-bottom: 4vh;">Data to annotate</h1>
-		<form action="{{url('/projects\/')}}{{$project->id_prj}}/annotation">
+		<form action="{{url(route('projects_project_annotation',['id_prj' => $project]))}}">
 			<input type="submit" class="myButton" value="Start annotate"></input>
 		</form>
 
 	<!-- If the user isn't connected, access blocked and he's invited to log on -->
 	@else
 		<h1 style="color:red;">You are not connected</h1>
-		<a id="back_btn" href="{{url('/')}}">❮ Log in</a><br>
+		<a id="back_btn" href="{{url(route('auth'))}}">❮ Log in</a><br>
 	@endif
 	
 @endsection

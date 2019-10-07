@@ -3,16 +3,16 @@
 
 	if (session()->get('typeExp') != NULL && (session()->get('typeExp') == "admin" || session()->get('typeExp') == "superadmin")) 
 	{
-        echo "<a id='create_account' href=\"".url('register')."\">Create an account</a>";
+        echo "<a id='create_account' href=\"".url(route('account_register'))."\">Create an account</a>";
 
-        echo "<a id='create_project' class='MyButton' href=\"".url('newproject')."\">Create project</a>";
+        echo "<a id='create_project' class='MyButton' href=\"".url(route('projects_new'))."\">Create project</a>";
 
-        echo "<a id='show_list_expert' class='MyButton' href=\"".url('list')."\">Show Expert's List</a>";
+        echo "<a id='show_list_expert' class='MyButton' href=\"".url(route('account_experts_list'))."\">Show Expert's List</a>";
     }
 
     if (session()->get('typeExp') != NULL && session()->get('typeExp') == true)
     {
-        echo "<a id='deco' href=\"".url('logout')."\">Sign Out</a>";
+        echo "<a id='deco' href=\"".url(route('account_logout'))."\">Sign Out</a>";
     }
 	
 	
@@ -47,7 +47,7 @@
 
 		<h1>Search project</h1><br>
 		
-		<form method="get" action="{{url('/projects')}}" enctype="multipart/form-data">
+		<form method="get" action="{{url(route('projects_list'))}}" enctype="multipart/form-data">
 			@csrf
 			<input class="input account" type="hidden" name="_token" id="token" value="{{csrf_token()}}">
 		
@@ -94,7 +94,7 @@
 								<!-- ID of the project -->
 								<th>{{$project->id_prj}}</th>
 
-								<form id="confidentForm" method="post" id="prjName" action="{{url('/projects\/')}}{{$project->id_prj}}" enctype="multipart/form-data">
+								<form id="confidentForm" method="post" id="prjName" action="{{url(route('projects_project',['id_prj' => $project]))}}" enctype="multipart/form-data">
 									<input type="hidden" name="_token" value="{{ csrf_token() }}">
 									<!-- Name of the project -->
 									<th id="name-cell"> <button class="buttonList" type="submit" class="project-details">{{$project->name_prj}}</button> </th>
@@ -107,7 +107,7 @@
 									@endif
 									
 									<!-- Project data export button -->
-									<th><a href="{{url('/projects\/')}}{{$project->id_prj}}/export">Export</a></th>
+									<th><a href="{{url(route('projects_project_export',['id_prj' => $project]))}}">Export</a></th>
 
 									<!-- Change the level of a expert for a project -->
 
@@ -121,8 +121,8 @@
 
 									<!-- If the user is an admin/superadmin -> Delete project button appears -->
 									@if (session()->get('typeExp') != NULL && (session()->get('typeExp') == 'superadmin' || session()->get('typeExp') == 'admin')) 
-										<th><a href="{{url('/projects\/')}}{{$project->id_prj}}/update">Update</a></th>
-										<th><a href="{{url('/projects\/')}}{{$project->id_prj}}/delete" id="delete-btn">Delete</a></th>	
+										<th><a href="{{url(route('projects_project_export',['id_prj' => $project]))}}">Update</a></th>
+										<th><a href="{{url(route('projects_project_delete',['id_prj' => $project]))}}">Delete</a></th>	
 									@endif
 
 								</form>
@@ -136,7 +136,7 @@
 		</table>
 	@else
 		<h1 style="color:red;">You are not connected</h1>
-		<a id="back_btn" href="{{url('/')}}">❮ Log in</a><br>
+		<a id="back_btn" href="{{url(route('auth'))}}">❮ Log in</a><br>
 	@endif
 
 	<script type="text/javascript">

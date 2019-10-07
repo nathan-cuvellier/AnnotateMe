@@ -5,12 +5,14 @@
 
     
     @if (session()->get('typeExp') != NULL && session()->get('typeExp') == true) 
-        <a id="back_btn" href="{{url('/projects/')}}">❮ Back</a><br>
+        <a id="back_btn" href="{{url(route('projects_list'))}}">❮ Back</a><br>
 
 
         <h1>Are you sure you want to export annotations for this project ?</h1><br>
-        
-        <form method="post" action="{{url('/projects\/')}}{{$id_prj}}/exportDatas" enctype="multipart/form-data">
+
+        //url('route('account_experts_expert_update_confirmed',['id_exp' => $exp]))
+
+        <form method="post" action="{{url(route('projects_project_export',['id_prj' => $id_prj]))}}" enctype="multipart/form-data">
             <input type="hidden" name="_token" value="{{ csrf_token() }}" >
 
             
@@ -46,7 +48,7 @@
         
     @else
         <h1 style="color:red;">You are not connected</h1>
-        <a id="back_btn" href="{{url('/')}}">❮ Log in</a><br>
+        <a id="back_btn" href="{{url(route('auth'))}}">❮ Log in</a><br>
     @endif
 
 @endsection

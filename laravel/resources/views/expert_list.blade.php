@@ -3,16 +3,16 @@
 
 if (session()->get('typeExp') != NULL && (session()->get('typeExp') == "admin" || session()->get('typeExp') == "superadmin")) 
 {
-	echo "<a id='create_account' href=\"".url('register')."\">Create an account</a>";
+	echo "<a id='create_account' href=\"".url(route('account_register'))."\">Create an account</a>";
 
-	echo "<a id='create_project' class='MyButton' href=\"".url('newproject')."\">Create project</a>";
+	echo "<a id='create_project' class='MyButton' href=\"".url(route('projects_new'))."\">Create project</a>";
 
-	echo "<a id='show_list_expert' class='MyButton' href=\"".url('list')."\">Show Expert's List</a>";
+	echo "<a id='show_list_expert' class='MyButton' href=\"".url(route('account_experts_list'))."\">Show Expert's List</a>";
 }
 
 if (session()->get('typeExp') != NULL && session()->get('typeExp') == true)
 {
-	echo "<a id='deco' href=\"".url('logout')."\">Sign Out</a>";
+	echo "<a id='deco' href=\"".url(route('account_logout'))."\">Sign Out</a>";
 }
 
 
@@ -24,7 +24,7 @@ if (session()->get('typeExp') != NULL && session()->get('typeExp') == true)
 @endif
 
 @if (session()->get('typeExp') != NULL && session()->get('typeExp') == true) 
-<a id="back_btn" href="{{url('/projects/')}}">❮ Back</a><br>
+<a id="back_btn" href="{{url(route('projects_list'))}}">❮ Back</a><br>
 
 <div style="margin-bottom:14%;">
 	@foreach($allExpert as $aExp)
@@ -33,7 +33,7 @@ if (session()->get('typeExp') != NULL && session()->get('typeExp') == true)
 		<!-- <div id="DelButton">X</div> -->
 		@if(session()->get('typeExp') == 'superadmin')
 		@if($aExp->type_exp == "expert" || $aExp->type_exp == "admin")
-		<form method="post" action="{{url('/list\/')}}{{$aExp->id_exp}}/delete-expert">
+		<form method="post" action="{{url(route('account_experts_expert_delete',['id_exp' => $aExp]))}}">
 			@csrf
 			<button type="submit" class="myButton delete" id="delete_btn">X</button>
 		</form>
@@ -41,7 +41,7 @@ if (session()->get('typeExp') != NULL && session()->get('typeExp') == true)
 		@endif
 		@if(session()->get('typeExp') == 'admin')
 		@if($aExp->type_exp == "expert")
-		<form method="post" action="{{url('/list\/')}}{{$aExp->id_exp}}/delete-expert">
+		<form method="post" action="{{url(route('account_experts_expert_delete',['id_exp' => $aExp]))}}">
 			@csrf
 			<button type="submit" class="myButton delete" id="delete_btn">X</button>
 		</form>
@@ -54,7 +54,7 @@ if (session()->get('typeExp') != NULL && session()->get('typeExp') == true)
 		@if(session()->get('typeExp') == 'superadmin')
 		@if($aExp->type_exp == "expert" || $aExp->type_exp == "admin")
 		<div>
-			<a class="modify" href="{{url('/list\/')}}{{$aExp->id_exp}}/update">Modify</a>
+			<a class="modify" href="{{url(route('account_experts_expert_update',['id_exp' => $aExp]))}}">Modify</a>
 		</div>
 		@else
 		<div>SuperAdmin</div>
@@ -83,7 +83,7 @@ if (session()->get('typeExp') != NULL && session()->get('typeExp') == true)
 
 @else
 <h1 style="color:red;">You are not connected</h1>
-<a id="back_btn" href="{{url('/')}}">❮ Log in</a><br>
+<a id="back_btn" href="{{url(route('auth'))}}">❮ Log in</a><br>
 @endif
 
 @endsection

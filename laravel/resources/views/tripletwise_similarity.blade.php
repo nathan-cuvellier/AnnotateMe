@@ -4,7 +4,7 @@
 
 	<div id="triple">
 
-		<form method="post" action="{{ url('/projects\/')}}{{$prj->id_prj}}/tripletwise/valide">
+		<form method="post" action="{{ url(route('projects_project_triple_classification_validate',['id_prj' => $prj]))}}">
 
 		    <input type="hidden" name="_token" value="{{ csrf_token() }}" >
 		    <input type="hidden" name="id" value="{{$prj->id_prj}}" >
