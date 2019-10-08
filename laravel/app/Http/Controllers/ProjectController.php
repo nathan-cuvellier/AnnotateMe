@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Request;
 
 use App\Annotation;
@@ -63,7 +64,7 @@ class ProjectController extends Controller
 				$projects_searched = Project::where('name_prj','ILIKE', "%$search%")->where('id_int','=',$interface)->get(); //If search term exists, search project name wich contain this
 			else if($interface == "all" && $session_mode != "all")
 				$projects_searched = Project::where('name_prj','ILIKE', "%$search%")->where('id_mode','=',$session_mode)->get(); //If search term exists, search project name wich contain this
-			else 
+			else
 				$projects_searched = Project::where('name_prj','ILIKE', "%$search%")->get();
 
 			//We only count the projects found with those the user has access
@@ -79,7 +80,7 @@ class ProjectController extends Controller
 				$search = null; //Destroy search term value
 				$interface = "all";
 				$session_mode = "all";
-			}	
+			}
 		}
 
 		// Admin/SuperAdmin connected
@@ -105,7 +106,7 @@ class ProjectController extends Controller
 			}
 		}
 
-		// If the user participate at any project 
+		// If the user participate at any project
 		if(count($particitionProject) == 0)
 		{
 			$projects = array();
@@ -127,7 +128,7 @@ class ProjectController extends Controller
 		if(session()->has('nb_annot_limit'))
 			session()->forget('nb_annot_limit');
 
-		 return view ("project_list_page", 
+		 return view ("project_list_page",
 					 [
 						"projects"=> $projects,
 						"modes"=> SessionMode::All(),
@@ -143,19 +144,19 @@ class ProjectController extends Controller
 	    {
 	        $part = Participation::whereIn('id_prj',[$id])->whereIn('id_exp',[session()->get('idExp')])->get();
 
-	        
+
 
 	        if($part->isEmpty()){
 	           dd("Access DENIED");
 	        }
-	        
+
 	       	$part[0]->expert_project_confidence_level = $request->input('confiance');
 	       	$part[0]->save();
-	     	return view ("project_details_page", 
+	     	return view ("project_details_page",
 	     				[
-	     					'projects'=>Project::all(), 
+	     					'projects'=>Project::all(),
 	     					'project'=>Project::find($id),
-	     					"category"=> Category::all(), 
+	     					"category"=> Category::all(),
 	     					"expert"=> Expert::all(),
 	     					"listeInterfaces"=> Interfaces::all(),
 	     					"listeModes" => SessionMode::all()
@@ -176,7 +177,7 @@ class ProjectController extends Controller
 
 	        $i=0;
 	        foreach ($allExpertNoAdmin as $aExpNoAdmin) {
-	        	
+
         		if($ExperPart->contains($aExpNoAdmin))
 	        	{
 	        		$allExpertParticipation[$i] = array($aExpNoAdmin,true);
@@ -187,11 +188,11 @@ class ProjectController extends Controller
 	        	$i++;
 	        }
 
-	        return view ("project_update_page", 
+	        return view ("project_update_page",
 	                    [
-	                        'projects'=> Project::all(), 
+	                        'projects'=> Project::all(),
 	                        'project'=> Project::whereIn('id_prj',[$id])->get(),
-	                        "category"=> Category::all(), 
+	                        "category"=> Category::all(),
 	                        "expert"=> Expert::all(),
 	                        "listeModes"=> SessionMode::all(),
 	                        "allExpertParticipation" => $allExpertParticipation,
@@ -234,8 +235,8 @@ class ProjectController extends Controller
 					{
 						$zip->extractTo($path.$prj->name_prj."/".strstr($fileName, ".", true));
 						$zip->close();
-					} 
-					else 
+					}
+					else
 					{
 						dd($zip->open($path.$prj->name_prj."/".$fileName));
 					}
@@ -260,7 +261,7 @@ class ProjectController extends Controller
 	        $limit = $prj->update(['limit_prj' => $limit_]);
 
 	        $allParticipation = Participation::where("id_prj",[$id])->get();
-	        $allExpertAdmin = Expert::whereIn("type_exp",["admin","superadmin"])->get(); 
+	        $allExpertAdmin = Expert::whereIn("type_exp",["admin","superadmin"])->get();
 	        foreach ($allParticipation as $aPart) {
 	        	$aPart->delete();
 	        }
@@ -326,17 +327,17 @@ class ProjectController extends Controller
 	    /* Ask page to confirm the delete of the project */
 	    public function delete($id)
 	    {
-	        return view ("project_delete_page", 
+	        return view ("project_delete_page",
 	                    [
-	                        'projects'=> Project::all(), 
+	                        'projects'=> Project::all(),
 	                        'project'=> Project::whereIn('id_prj',[$id])->get(),
-	                        "category"=> Category::all(), 
+	                        "category"=> Category::all(),
 	                        "expert"=> Expert::all(),
 	                    ]);
 	    }
 
 
-	    
+
 
    	//---------Function about a project---------------
 
@@ -381,14 +382,24 @@ class ProjectController extends Controller
 
 		public function save(ValidateCreateProject $request) {
 			$data = $request->except('_token');
-			
+
 			$allAdmin = Expert::whereIn("type_exp",["superadmin","admin"])->get();
 
 			//Standardizes the project name (no space and no MAJ)
 			$data["name_prj"] = strtolower(str_replace(" ", "_",$request->input("name_prj")));
 
-			$prj = Project::create($data);
-			
+            $this->validate($request, [
+                'name_prj' => 'string|required|between:5,28',
+                'desc_prj' => 'string|nullable',
+                'id_mode' => 'integer|required',
+                'limit_prj' => 'integer|required|between:0,3600',
+                'id_int' => 'integer|required',
+                'id_exp' => 'integer|nullable',
+                'datas' => 'required|file',
+            ]);
+
+            $prj = Project::create($data);
+
 			//Create table participation
 			$currentUserMade = false;
 			foreach ($allAdmin as $aAdmin) {
@@ -413,7 +424,7 @@ class ProjectController extends Controller
 		        $participation->save();
 				}
 			}
-			
+
 			if(!$currentUserMade)
 			{
 				$participation = new Participation;
@@ -422,7 +433,7 @@ class ProjectController extends Controller
 		        $participation->id_exp = session()->get('idExp');
 		        $participation->save();
 			}
-			
+
 
 			$path = "./source/storage/app/datas/";
 			if(is_dir($path))
@@ -436,7 +447,7 @@ class ProjectController extends Controller
 				mkdir($path, 0775, true);
 				$datas = scandir($path);
 			}
-			
+
 			$file = request()->file("datas");
 			$fileName = $file->getClientOriginalName();
 
@@ -448,8 +459,8 @@ class ProjectController extends Controller
 				{
 				    $zip->extractTo($path.strstr($fileName, ".", true));
 				    $zip->close();
-				} 
-				else 
+				}
+				else
 				{
 				    dd($zip->open($path.$fileName));
 				}
@@ -477,11 +488,11 @@ class ProjectController extends Controller
 			session()->put('experts');
 			return view('createProject',
 						[
-							"listeModes"=> SessionMode::all(), 
-							"listeInterfaces"=> Interfaces::all(), 
+							"listeModes"=> SessionMode::all(),
+							"listeInterfaces"=> Interfaces::all(),
 							"allExpertNoAdmin"=>$allExpertNoAdmin
 						]);
-		
+
 		}
 
 
@@ -523,7 +534,7 @@ class ProjectController extends Controller
 					foreach ($datas as $aData) {
 						for($i=$startFor;$i<$nbDatasToTuple-1;$i++)
 						{
-							
+
 							$s = new Pairwise();
 							$s->id_exp = session()->get('idExp');
 							$s->id_data1 = $aData->id_data;
@@ -534,7 +545,7 @@ class ProjectController extends Controller
 						$startFor ++;
 					}
 					break;
-				
+
 				case 3:
 					$startFor2 = 0;
 
@@ -559,6 +570,6 @@ class ProjectController extends Controller
 						return false;
 						break;
 			}
-			return $res;	
+			return $res;
 		}
 }

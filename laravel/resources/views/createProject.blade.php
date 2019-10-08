@@ -5,7 +5,7 @@
 @section('content')
 
 <style type="text/css">
-    
+
     .input.account
     {
         display: block;
@@ -21,14 +21,14 @@
             @csrf
             <input class="input account" type="hidden" name="_token" id="token" value="{{csrf_token()}}">
             <label for="name_prj">Name</label>
-            <input class="input account" type="text" name="name_prj" value="{{old('name_prj')}}">
+            <input class="input account" type="text" name="name_prj" maxlength="28" size="28" value="{{old('name_prj')}}">
 
             @if ($errors->has('name_prj'))
                 <div class="error">{{ $errors->first('name_prj') }}</div>
             @endif
 
             <label for="desc_prj">Description</label>
-            <input class="input account" type="text" name="desc_prj" value="{{old('desc_prj')}}">
+            <textarea class="input account" type="text" name="desc_prj" maxlength="240" value="{{old('desc_prj')}}" style="resize: none; width: 250px; height: 80px;"></textarea>
 
             @if ($errors->has('desc_prj'))
                 <div class="error">{{ $errors->first('desc_prj') }}</div>
@@ -44,7 +44,7 @@
             </select>
 
             <label for="limit_prj" id="labelValue">Value of the limitation (in second)</label>
-            <input class="input account" type="text" name="limit_prj" value="{{old('limit_prj')}}">
+            <input class="input account" type="number" min="0" max="3600" name="limit_prj" value="{{old('limit_prj')}}">
 
             @if ($errors->has('limit_prj'))
                 <div class="error">{{ $errors->first('limit_prj') }}</div>
@@ -59,26 +59,20 @@
                 @endforeach
             </select>
 
-            
-
             @if ($errors->has('id_int'))
                 <div class="error">{{ $errors->first('id_int') }}</div>
             @endif
 
-            <label for="datas" class="label-file">Folders to annotate (.zip)</label><br>
+            <label for="datas" class="label-file">Folders to annotate (.zip with img.png & categories.txt)</label><br>
             <input type="file" class="input-file" id="datas" accept=".zip" name="datas">
-
 
             @if ($errors->has('datas'))
                 <div class="error">{{ $errors->first('datas') }}</div>
             @endif
-            
-           
 
             <br><br><label for="id_expAdd">Allowed experts</label>
             <input class="input account" name="id_exp" type="hidden" value="{{session()->get('idExp')}}">
 
-            
             <div class="multiselect">
                 <div class="selectBox" onclick="showCheckboxes()">
                     <select class="input account">
