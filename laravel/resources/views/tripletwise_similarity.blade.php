@@ -8,10 +8,7 @@
 
 		    <input type="hidden" name="_token" value="{{ csrf_token() }}" >
 		    <input type="hidden" name="id" value="{{$prj->id_prj}}" >
-
-
-
-		    <?php 
+		    <?php
 					if ($errors->any()) {
 						$mesErreurs = $errors->all();
 						if ($errors->has('cat') && !$errors->has('confiance')) {
@@ -27,8 +24,8 @@
 
 			?>
 
-					
-			
+
+
 		    <div id="images_triple">
 		    @foreach($elements as $aEle)
 		    	<input type="hidden" name="elements[]" value="{{$aEle->id_data}}">
@@ -40,18 +37,18 @@
 				</div>
 
 		    <!-- Display the category -->
-		    <div class="choice_triple"> 
+		    <div class="choice_triple">
                 @foreach ($allCat as $aCat)
 					  <div id="triple_choice_div">
 		                	<label class="container_check" for="{{$aCat}}">{{$aCat['label_cat']}}
-		                		<input class="choix_cat styled-input-single" id="{{$aCat}}" type="radio" name="cat" value={{$aCat["id_cat"]}}> 
+		                		<input class="choix_cat styled-input-single" id="{{$aCat}}" type="radio" name="cat" value={{$aCat["id_cat"]}}>
 		                		<span class="radiobtn v3"></span>
 		                	</label>
 		                </div>
                 @endforeach
-                
+
             </div>
             <p class="errors" id="errorCat">{{$mesErreurs[0]}}</p>
 	</div>
-	
+
 @endsection

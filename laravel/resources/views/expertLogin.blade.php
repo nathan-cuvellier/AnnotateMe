@@ -1,7 +1,7 @@
 @extends('layout.Projet')
-<?php 
+<?php
 
-	if (session()->get('typeExp') != NULL && (session()->get('typeExp') == "admin" || session()->get('typeExp') == "superadmin")) 
+	if (session()->get('typeExp') == "admin" || session()->get('typeExp') == "superadmin")
 	{
         echo "<a id='create_account' href=\"".url(route('account_register'))."\">Créer un compte</a>";
     }
@@ -10,7 +10,7 @@
     {
         echo "<a id='deco' href=\"".url(route('account_logout'))."\">Déconnexion</a>";
     }
-	
+
 
  ?>
 
@@ -22,7 +22,7 @@
 
 
 			<?php
-				
+
 
 				if ($errors->any())
 				{
@@ -53,7 +53,7 @@
 			<input class="input" type="password" name="pwd_exp" placeholder="Password"><br>
 			<p class="error_create" id="errorIntervalle2">{{$mesErreurs[1]}}</p>
 
-			<?php 
+			<?php
 				if(isset($passError))
 					 echo "<p class=\"error_create\" id=\"errorIntervalle\">".$passError."</p>";
 			 ?>
@@ -66,7 +66,7 @@
 	<script type="text/javascript">
 	    window.location = "./projects";
 	</script>
-		
+
 	@endif
 @endsection
 
