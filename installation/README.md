@@ -1,11 +1,12 @@
 # Installation by fork/clone
 
 
-###Setup
+### Setup
 
-> :warning: change .env
+> :warning: setup database in .env
 
 ```
 $ cd installation
+$ chmod +x setup.sh
 $ ./setup.sh
 ```
