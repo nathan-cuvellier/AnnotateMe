@@ -23,7 +23,7 @@
         ?>
         <div id="annot" >
             <div id="images">
-                <img id="imageAnnot" src="<?php echo asset($elements[0]->pathname_data) ?>" />
+                <img id="imageAnnot" src="<?php echo asset('storage/app/datas/' . $elements[0]->pathname_data) ?>" />
             </div>
 
             <div id="cat" >

@@ -214,7 +214,8 @@ class ProjectController extends Controller
 				$file = request()->file("datas");
 				$fileName = $file->getClientOriginalName();
 
-				$path = "./source/storage/app/datas/";
+				$path = __DIR__ . DIRECTORY_SEPARATOR . "storage/app/datas/";
+
 				if(is_dir($path))
 				{
 					$datas = scandir($path);
@@ -347,6 +348,10 @@ class ProjectController extends Controller
 			foreach ($dir as $file) {
 				if($file->isDot()) continue;
 				$lefichier = $pathParam."/".$file->getFilename();
+
+				$explode_path = explode('/',$lefichier);
+                $name_project_file = $explode_path[count($explode_path)-3] . '/' .  $explode_path[count($explode_path)-2] . '/' . $explode_path[count($explode_path)-1];
+
 				$this->arrayDebug[] = $lefichier;
 				if($indexParam == false && $file->getFilename() == "categories.txt")
 				{
@@ -369,7 +374,8 @@ class ProjectController extends Controller
 					} else {
 						$dataToAnnotate = new Data();
 						$dataToAnnotate->id_prj = $prjParam->id_prj;
-						$dataToAnnotate->pathname_data = substr($lefichier, -strlen($lefichier)+1);
+                        $dataToAnnotate->pathname_data =
+						$dataToAnnotate->pathname_data = $name_project_file;
 						$dataToAnnotate->nbannotation_data = 0;
 						$dataToAnnotate->save();
 
@@ -435,7 +441,7 @@ class ProjectController extends Controller
 			}
 
 
-			$path = "./source/storage/app/datas/";
+            $path = __DIR__ . '/../../../public/storage/app/datas/';
 			if(is_dir($path))
 			{
 				$datas = scandir($path);

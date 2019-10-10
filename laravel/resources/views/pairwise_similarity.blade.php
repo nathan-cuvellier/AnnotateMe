@@ -2,15 +2,15 @@
 
 
 @section('content')
-    
-  <form method="post" action="{{ url(route('projects_project_double_classification_validate',['id_prj' => $prj]))}}"> 
+
+  <form method="post" action="{{ url(route('projects_project_double_classification_validate',['id_prj' => $prj]))}}">
     <input type="hidden" name="_token" value="{{ csrf_token() }}" >
     @foreach($elements as $aEle)
       <input type="hidden" name="elements[]" value="{{$aEle->id_data}}" >
     @endforeach
     <input type="hidden" name="id" value="{{$prj->id_prj}}" >
-    
-    <?php 
+
+    <?php
     if ($errors->any()) {
       $mesErreurs = $errors->all();
       if ($errors->has('cat') && !$errors->has('confiance')) {
@@ -24,31 +24,31 @@
       $mesErreurs[1] = '';
     }
     ?>
-    
+
     <div id="annot">
       <div id="images_sim_1">
-        <img class="imageAnnot_sim" src="<?php echo asset($elements[0]->pathname_data) ?>" />
+        <img class="imageAnnot_sim" src="<?php echo asset('storage/app/datas/' . $elements[0]->pathname_data) ?>" />
       </div>
 
       <div id="cat" >
-        <div class="choice"> 
+        <div class="choice">
           @foreach ($allCat as $aCat)
             <div>
               <label class="container_check" for="{{$aCat}}">{{$aCat['label_cat']}}
-                <input class="choix_cat styled-input-single" id="{{$aCat}}" type="radio" name="cat" value={{$aCat["id_cat"]}}> 
+                <input class="choix_cat styled-input-single" id="{{$aCat}}" type="radio" name="cat" value={{$aCat["id_cat"]}}>
                 <span class="radiobtn v2"></span>
               </label>
             </div>
-          @endforeach 
+          @endforeach
         </div>
         <p class="errors" id="errorCat">{{$mesErreurs[0]}}</p>
       </div>
       <div id="images_sim_2">
-        <img class="imageAnnot_sim" src="<?php echo asset($elements[1]->pathname_data) ?>" />
+        <img class="imageAnnot_sim" src="<?php echo asset('storage/app/datas/' . $elements[1]->pathname_data) ?>" />
       </div>
     </div>
 
 
-    <p class="errors" id="errorIntervalle">{{$mesErreurs[1]}}</p>  
+    <p class="errors" id="errorIntervalle">{{$mesErreurs[1]}}</p>
 
 @endsection
