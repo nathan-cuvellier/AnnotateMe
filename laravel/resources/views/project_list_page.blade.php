@@ -1,7 +1,7 @@
 @extends('layout.Projet')
-<?php 
+<?php
 
-	if (session()->get('typeExp') != NULL && (session()->get('typeExp') == "admin" || session()->get('typeExp') == "superadmin")) 
+	if (session()->get('typeExp') != NULL && (session()->get('typeExp') == "admin" || session()->get('typeExp') == "superadmin"))
 	{
         echo "<a id='create_account' href=\"".url(route('account_register'))."\">Create an account</a>";
 
@@ -14,14 +14,14 @@
     {
         echo "<a id='deco' href=\"".url(route('account_logout'))."\">Sign Out</a>";
     }
-	
-	
+
+
 
  ?>
 @section('content')
 
-	
-	@if (session()->get('typeExp') != NULL && session()->get('typeExp') == true) 
+
+	@if (session()->get('typeExp') != NULL && session()->get('typeExp') == true)
 		<style type="text/css">
 			table, th, td {
 			    border: 1px solid black;
@@ -46,11 +46,11 @@
 		@endif
 
 		<h1>Search project</h1><br>
-		
+
 		<form method="get" action="{{url(route('projects_list'))}}" enctype="multipart/form-data">
 			@csrf
 			<input class="input account" type="hidden" name="_token" id="token" value="{{csrf_token()}}">
-		
+
 			<input type="text" class="input" name="search" placeholder="Search...">
 			<select name="interface" class="input account" id="select_listpage">
 				<option value="all" selected>All interface types</option>
@@ -62,11 +62,11 @@
 				<option value="all" selected>All limitation modes</option>
 				<option value="1">Time</option>
 				<option value="2">Number of annotations</option>
-			</select> 
+			</select>
 			<button class="MyButton" type="submit" name="submit_search">SEARCH</button>
 			<button class="MyButton" type="submit" value="null">RESET</button>
 		</form>
-		
+
 		<br><br>
 		<hr>
 		<br>
@@ -79,7 +79,7 @@
 				<th>Project Type</th>
 				<th>Export Data</th>
 				<th>My expert project<br>confidence level</th>
-				@if (session()->get('typeExp') != NULL && (session()->get('typeExp') == 'superadmin' || session()->get('typeExp') == 'admin')) 
+				@if (session()->get('typeExp') != NULL && (session()->get('typeExp') == 'superadmin' || session()->get('typeExp') == 'admin'))
 					<th>Update settings</th>
 					<th>Delete project</th>
 				@endif
@@ -101,11 +101,11 @@
 
 									<!-- Limitation mode of the project ( and value ) -->
 									@if($project->id_mode == 1)
-										<th>{{$interface->label_int}} <br> {{$mode->label_mode}} ({{$project->limit_prj}} minutes)</th>	
+										<th>{{$interface->label_int}} <br> {{$mode->label_mode}} ({{$project->limit_prj}} minutes)</th>
 									@else
 										<th>{{$interface->label_int}} <br> {{$mode->label_mode}} ({{$project->limit_prj}} annotations)</th>
 									@endif
-									
+
 									<!-- Project data export button -->
 									<th><a href="{{url(route('projects_project_export',['id_prj' => $project]))}}">Export</a></th>
 
@@ -120,9 +120,9 @@
 										@endforeach
 
 									<!-- If the user is an admin/superadmin -> Delete project button appears -->
-									@if (session()->get('typeExp') != NULL && (session()->get('typeExp') == 'superadmin' || session()->get('typeExp') == 'admin')) 
-										<th><a href="{{url(route('projects_project_export',['id_prj' => $project]))}}">Update</a></th>
-										<th><a href="{{url(route('projects_project_delete',['id_prj' => $project]))}}">Delete</a></th>	
+									@if (session()->get('typeExp') != NULL && (session()->get('typeExp') == 'superadmin' || session()->get('typeExp') == 'admin'))
+										<th><a href="{{url(route('projects_project_update',['id_prj' => $project]))}}">Update</a></th>
+										<th><a href="{{url(route('projects_project_delete',['id_prj' => $project]))}}">Delete</a></th>
 									@endif
 
 								</form>
