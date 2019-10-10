@@ -31,7 +31,7 @@
 		    	<input type="hidden" name="elements[]" value="{{$aEle->id_data}}">
 
 		    	<div id="{{$aEle->id_data}}" class="img_trpl_div div">
-		        	<img class="imageAnnot_triple" src="<?php echo asset($aEle->pathname_data) ?>" />
+		        	<img class="imageAnnot_triple" src="<?php echo asset('storage/app/datas/' . $aEle->pathname_data) ?>" />
 		        </div>
 		    @endforeach
 				</div>
