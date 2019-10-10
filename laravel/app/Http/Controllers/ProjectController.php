@@ -214,7 +214,7 @@ class ProjectController extends Controller
 				$file = request()->file("datas");
 				$fileName = $file->getClientOriginalName();
 
-				$path = __DIR__ . DIRECTORY_SEPARATOR . "storage/app/datas/";
+                $path = __DIR__ . '/../../../public/storage/app/datas/';
 
 				if(is_dir($path))
 				{
