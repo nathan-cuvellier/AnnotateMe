@@ -5,10 +5,11 @@
 @section('content')
 
     <a id="back_btn" href="{{url(route('account_experts_list'))}}">❮ Back</a>
-    <form style="display: inline-grid;" id="" method="post" action="{{url('route('account_experts_expert_update_confirmed',['id_exp' => $exp]))}}">
-        <input type="hidden" name="_token" value="{{ csrf_token() }}" >
+    <form style="display: inline-grid;" id="" method="post"
+          action="{{url(route('account_experts_expert_update_confirmed',['id_exp' => $exp]))}}">
+        <input type="hidden" name="_token" value="{{ csrf_token() }}">
         @csrf
-        
+
         <input type="hidden" name="truepwd" value="{{$exp->pwd_exp}}">
 
         <label for="name_exp">Lastname</label>
@@ -26,20 +27,19 @@
             <div class="error_create">{{ $errors->first('firstname_exp') }}</div>
         @endif
 
-        @if (session()->get('typeExp') != NULL && session()->get('typeExp') == "superadmin") 
+        @if (session()->get('typeExp') != NULL && session()->get('typeExp') == "superadmin")
             <label for="type_exp">Type of expert</label>
             <select name="type_exp" class="input account">
                 <option value="expert">Expert</option>
                 <option value="admin">Admin</option>
             </select>
             @if ($errors->has('type_exp'))
-            <div class="error_create">{{ $errors->first('type_exp') }}</div>
+                <div class="error_create">{{ $errors->first('type_exp') }}</div>
             @endif
         @else
             <input type="hidden" name="type_exp" value="expert">
         @endif
 
-        
 
         <label for="bd_date_exp">Birth date</label>
         <input class="input account" type="date" name="bd_date_exp" value="{{$exp->bd_date_exp}}">
@@ -95,8 +95,8 @@
 
 
 
-        <!-- MODIF PASSWORD -->
-        
+    <!-- MODIF PASSWORD -->
+
 
         <label for="new1_pwd_exp">New Password</label>
         <input class="input account" type="password" name="new1_pwd_exp"=>
@@ -118,6 +118,6 @@
         </button>
 
     </form>
-  
+
 
 @endsection

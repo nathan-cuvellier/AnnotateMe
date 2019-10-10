@@ -4,19 +4,16 @@
 
 @section('content')
 
-<style type="text/css"> 
+<style type="text/css">
     .input.account
     {
         display: block;
         margin-left: 42.5%;
     }
 </style>
-        
+
 <script type="text/javascript" src="{{ URL::asset('js/createProject.js') }}"></script>
 
-
-    <!-- Check if the user connected -->
-    @if (session()->get('typeExp') != NULL && session()->get('typeExp') == true) 
         <a id="back_btn" href="{{url(route('projects_list'))}}">❮ Back</a><br>
 
         <h1>Update Project</h1><br>
@@ -47,7 +44,7 @@
                     <input class="input account" type="text" name="id_interface" value="{{$interface->label_int}}" disabled readonly>
                 @endif
             @endforeach
-            
+
             <!-- Limitation mode of the project -->
             <label for="limit_prj">Annotation session Mode</label>
             <select class="input account" name="id_mode" id="selectlimit" onchange="displayLimitationValue()">
@@ -57,7 +54,7 @@
                     @else
                         <option value="{{$mode->id_mode}}">{{$mode->label_mode}}</option>
                     @endif
-                
+
                 @endforeach
             </select>
 
@@ -72,7 +69,7 @@
             <!-- New folders to add -->
             <label for="datas" class="label-file">Add .zip folders to annotate</label><br>
             <input type="file" id="datas" accept=".zip" name="datas">
-            
+
             <div class="multiselect">
                 <div class="selectBox" onclick="showCheckboxes()">
                     <select class="input account">
@@ -92,15 +89,9 @@
                     @endforeach
                 </div>
             </div>
-            
+
             <!-- Validation button -->
             <button class="myButton" type="submit">Update project</button>
         </form>
-
-    <!-- If the user isn't connected, access blocked and he's invited to log on -->
-    @else
-        <h1 style="color:red;">You are not connected</h1>
-        <a id="back_btn" href="{{url(route('auth'))}}">❮ Log in</a><br>
-    @endif
 
 @endsection
