@@ -13,7 +13,9 @@ if (session()->get('typeExp') != NULL && session()->get('typeExp') == true) {
     echo "<a id='deco' href=\"" . url(route('account_logout')) . "\">Sign Out</a>";
 }
 
-
+if (session()->get('typeExp') != NULL && session()->get('typeExp') == true) {
+    echo "<a id='deco' href=\"" . url(route('account_logout')) . "\">Sign Out</a>";
+}
 
 ?>
 @section('content')
@@ -141,7 +143,7 @@ if (session()->get('typeExp') != NULL && session()->get('typeExp') == true) {
 
                                 <!-- If the user is an admin/superadmin -> Delete project button appears -->
                                     @if (session()->get('typeExp') != NULL && (session()->get('typeExp') == 'superadmin' || session()->get('typeExp') == 'admin'))
-                                        <th><a href="{{url(route('projects_project_export',['id_prj' => $project]))}}">Update</a>
+                                        <th><a href="{{url(route('projects_project_update',['id_prj' => $project]))}}">Update</a>
                                         </th>
                                         <th><a href="{{url(route('projects_project_delete',['id_prj' => $project]))}}">Delete</a>
                                         </th>
