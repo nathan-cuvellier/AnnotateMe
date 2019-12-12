@@ -1,20 +1,8 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
-use App\Annotation;
-use App\Category;
-use App\Competencelevel;
-use App\Data;
-use App\Date;
-use App\Expert;
-use App\Interfaces;
-use App\Participation;
-use App\Project;
-use App\SessionMode;
-use App\Pairwise;
-use App\Tripletwise;
 
 class HomeController extends Controller
 {
@@ -25,16 +13,18 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
     }
 
     /**
      * Show the application dashboard.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Support\Renderable
      */
     public function index()
     {
-        return view('home');
+        if(session()->has('expert'))
+            return redirect()->route('project.list');
+
+        return redirect()->route('auth.login');
     }
 }

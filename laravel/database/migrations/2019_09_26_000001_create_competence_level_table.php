@@ -20,11 +20,18 @@ class CreateCompetenceLevelTable extends Migration
             $table->string('label_cptlvl',50);
         });
 
-        DB::statement("INSERT INTO public.competence_level VALUES (1,'Not an expert'); ");
-        DB::statement("INSERT INTO public.competence_level VALUES (2,'Confident'); ");
-        DB::statement("INSERT INTO public.competence_level VALUES (3,'Highly confident'); ");
-        DB::statement("INSERT INTO public.competence_level VALUES (4,'Expert'); ");
-
+        DB::table('competence_level')->insert([
+            'label_cptlvl' => 'Not an expert',
+        ]);
+        DB::table('competence_level')->insert([
+            'label_cptlvl' => 'Confident',
+        ]);
+        DB::table('competence_level')->insert([
+            'label_cptlvl' => 'Highly confident',
+        ]);
+        DB::table('competence_level')->insert([
+            'label_cptlvl' => 'Expert',
+        ]);
     }
 
     /**

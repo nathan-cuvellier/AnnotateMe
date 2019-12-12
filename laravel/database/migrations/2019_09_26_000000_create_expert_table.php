@@ -14,7 +14,7 @@ class CreateExpertTable extends Migration
     public function up()
     {
         Schema::create('expert', function (Blueprint $table) {
-            
+
             $table->increments('id_exp');
 
             $table->string('name_exp', 50);
@@ -29,9 +29,22 @@ class CreateExpertTable extends Migration
             $table->string('pwd_exp',100);
             $table->string('type_exp',20);
         });
-       
+
         DB::statement("ALTER TABLE expert ADD CONSTRAINT check_expert_typeexp CHECK (type_exp IN ('expert', 'admin',  'superadmin'))");
-        DB::statement("INSERT INTO public.expert VALUES (1,'Admin','super',now(),'null','null',0,'coucou@gmail.com','null','null','\$2y\$10\$E1cdLO7ZLDFqS9Bs3sCEC.IWWQsIxRUOKQnOLvGHFJg2.rlidxp1K','superadmin'); ");
+        DB::table('expert')->insert([
+            'name_exp' => 'admin',
+            'firstname_exp' => 'first name',
+            'bd_date_exp' => '10/10/1999',
+            'sex_exp' => 'male',
+            'address_exp' => 'rue de la paix',
+            'pc_exp' => 74000,
+            'mail_exp' => 'coucou@gmail.com',
+            'tel_exp' => '0666666666',
+            'city_exp' => 'brest',
+            'pwd_exp' => '$2y$10$E1cdLO7ZLDFqS9Bs3sCEC.IWWQsIxRUOKQnOLvGHFJg2.rlidxp1K',
+            'type_exp' => 'superadmin'
+        ]);
+        //DB::statement("INSERT INTO public.expert VALUES ('Admin','super',now(),'null','null',0,'coucou@gmail.com','null','null','\$2y\$10\$E1cdLO7ZLDFqS9Bs3sCEC.IWWQsIxRUOKQnOLvGHFJg2.rlidxp1K','superadmin'); ");
     }
 
     /**

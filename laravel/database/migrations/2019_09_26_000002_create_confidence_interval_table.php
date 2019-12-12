@@ -20,9 +20,15 @@ class CreateConfidenceIntervalTable extends Migration
             $table->string('label_confidence_interval',20);
         });
 
-        DB::statement("INSERT INTO public.confidence_interval VALUES (0,'Doubt'); ");
-        DB::statement("INSERT INTO public.confidence_interval VALUES (1,'Confident'); ");
-        DB::statement("INSERT INTO public.confidence_interval VALUES (2,'Highly confident'); ");
+        DB::table('confidence_interval')->insert([
+            'label_confidence_interval' => 'Doubt',
+        ]);
+        DB::table('confidence_interval')->insert([
+            'label_confidence_interval' => 'Confident',
+        ]);
+        DB::table('confidence_interval')->insert([
+            'label_confidence_interval' => 'Highly confident',
+        ]);
     }
 
     /**
