@@ -12,5 +12,3 @@ php artisan key:generate
 ln -s $(pwd)/storage public
 chmod -R 770 public/storage
 chown -R $USER:www-data public/storage
-
-php artisan migrate

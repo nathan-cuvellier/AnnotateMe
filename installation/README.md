@@ -6,7 +6,8 @@
 > :warning: setup database in .env
 
 ```
-$ cd installation
-$ chmod +x setup.sh
+$ chmod +x installation/setup.sh
 $ ./setup.sh
+$ cd ../laravel
+$ php artisan migrate
 ```
