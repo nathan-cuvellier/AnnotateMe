@@ -19,8 +19,12 @@ class CreateSessionModeTable extends Migration
             $table->string('label_mode',50);
         });
 
-        DB::statement("INSERT INTO public.session_mode VALUES (1,'Timer'); ");
-        DB::statement("INSERT INTO public.session_mode VALUES (2,'Number of annotations'); ");
+        DB::table('session_mode')->insert([
+            'label_mode' => 'Timer',
+        ]);
+        DB::table('session_mode')->insert([
+            'label_mode' => 'Number of annotations',
+        ]);
     }
 
     /**

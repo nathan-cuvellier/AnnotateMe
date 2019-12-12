@@ -14,7 +14,6 @@ class CreateParticipationTable extends Migration
     public function up()
     {
         Schema::create('participation', function (Blueprint $table) {
-            
             $table->increments('id_part');
             $table->integer('id_prj');
             $table->integer('id_cptlvl');

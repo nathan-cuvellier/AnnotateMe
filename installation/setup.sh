@@ -1,7 +1,6 @@
 #!/bin/sh
 
 cd ../laravel/
-echo -e $(pwd)
 composer install
 chmod -R 770 storage bootstrap/cache
 chown -R $USER:www-data storage bootstrap/cache
