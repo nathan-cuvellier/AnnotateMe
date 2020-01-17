@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Account;
+namespace App\Http\Controllers\Account\CRUD;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Contracts\Validation\Validator;
@@ -21,9 +21,9 @@ class UpdateController extends Controller
         $listTypeExpert = ['expert', 'admin', 'superadmin'];
         $listSexExpert = ['man', 'woman'];
 
-        // if expert try to update a other expert
+        // if expert try to update a other account
         if (session('expert')['type'] == "expert" && session('expert')['id'] != $id)
-            return abort(403);
+            return abort(403); // In order not to reveal the ids of existing accounts, always return a 403, if the user connected is of type expert
 
         $expert = Expert::find($id);
 
@@ -31,7 +31,7 @@ class UpdateController extends Controller
         if (is_null($expert) && session('expert')['type'] != "expert")
             return redirect()->route('account.list')->with('warning', "Account n°$id not found");
         else if (is_null($expert))
-            return abort(404);
+            return abort(403);// In order not to reveal the ids of existing accounts, always return a 403, if the user connected is of type expert
 
         // check if expert                      
         if($expert->id_exp != session('expert')['id'] && $expert->type_exp == session('expert')['type'])

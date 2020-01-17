@@ -19,6 +19,7 @@ class UpdateRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
+     * The min and max correspond at the constraints in database
      *
      * @return array
      */
@@ -34,13 +35,14 @@ class UpdateRequest extends FormRequest
             'waiting_time_prj' => 'required|integer|min:0',
         ];
 
-
-        if($this->request->get('name_prj') != $project->name_prj)
+        // check the constraint if expert change the name of project
+        if ($this->request->get('name_prj') != $project->name_prj)
             $rules['name_prj'] .= '|unique:project,name_prj';
 
 
         return $rules;
     }
+
     /**
      * Get custom attributes for validator errors.
      *

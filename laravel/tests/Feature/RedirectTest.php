@@ -6,20 +6,11 @@ use Tests\TestCase;
 
 class RedirectTest extends TestCase
 {
-    /**
-     * @return void
-     */
-    public function testBasicTest()
-    {
-        $response = $this->get('/')
-            ->assertRedirect('/login');
-    }
 
     public function testRedirectIfNotConnectedTest()
     {
-        $response = $this->get('/project')
-            ->assertRedirect('/login');
-
+        $response = $this->get(route('project.list'))
+            ->assertRedirect(route('auth.login'));
     }
 
     /**
@@ -36,16 +27,6 @@ class RedirectTest extends TestCase
         ]])
             ->get('/')
             ->assertRedirect(route('project.list'));
-    }
-
-    /**
-     * Expert try to create an account
-     */
-    public function test_error_unauthorized()
-    {
-        $this->withSession(['expert' => ['type' => 'expert']])
-            ->get('/register')
-            ->assertStatus(403);
     }
 
 }

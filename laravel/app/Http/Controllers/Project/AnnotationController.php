@@ -10,12 +10,18 @@ use DateTime;
 use App\Project;
 use App\Data;
 use App\Category;
+use App\Participation;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Session;
 use App\Annotation;
 
 class AnnotationController extends Controller
 {
+
+    /**
+     * @param $id
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     */
     public function show($id)
     {
         $limitAnnotation = LimitAnnotation::query()
@@ -23,12 +29,11 @@ class AnnotationController extends Controller
             ->where('id_prj', $id)
             ->first();
 
-
-        if(!is_null($limitAnnotation)) {
+        if (!is_null($limitAnnotation)) {
             $now = new DateTime();
             $dateLimit = new DateTime($limitAnnotation->date_limit_annotation);
 
-            if($now < $dateLimit) {
+            if ($now < $dateLimit) {
                 $date = date('\t\h\e d F \a\t H:i', strtotime($limitAnnotation->date_limit_annotation));
 
                 return redirect()->route('project.list')->with('warning', 'You can annotate again ' . $date);
@@ -37,7 +42,6 @@ class AnnotationController extends Controller
             }
 
         }
-        $now = new DateTime();
 
         $data = Project::query()
             ->join('data', 'project.id_prj', '=', 'data.id_prj')
@@ -46,6 +50,19 @@ class AnnotationController extends Controller
             ->join('interface', 'interface.id_int', '=', 'project.id_int')
             ->where('project.id_prj', $id)
             ->first();
+
+        // If there is a problem during the creation of project, the data (pictures) or categories, may not be created, so $data is null 
+        if(is_null($data))
+            return redirect()->route('project.list')->with('error', 'Error project not found');
+        
+        // Get particpation, in order to check if the expert is allow to access at this page
+        $participation = Participation::query()
+            ->where('id_prj', $id)
+            ->where('id_exp', session('expert')['id'])
+            ->first();
+
+        if(is_null($participation))
+            return abort(403);
 
         $pictures = Data::query()
             ->where('data.id_prj', $id)->get();
@@ -72,8 +89,8 @@ class AnnotationController extends Controller
             ];
 
             if ($data->id_mode == 1)
-                $annotation['time_end_annotation'] = $data->limit_prj;
-            else if($data->id_mode == 2)
+                $annotation['time_end_annotation'] = (new DateTime())->modify("+{$data->limit_prj} minutes")->format('Y-m-d H:i:s');
+            else if ($data->id_mode == 2)
                 $annotation['nb_annotation_remaining'] = $data->limit_prj;
 
             session()->put('annotation', $annotation);
@@ -81,21 +98,22 @@ class AnnotationController extends Controller
             /*
              * New Session if expert change project
              */
-            if(session('annotation')['id_prj'] != $data->id_prj) {
+            if (session('annotation')['id_prj'] != $data->id_prj) {
                 $annotation = [
                     'id_prj' => $data->id_prj,
                     'id_mode' => $data->id_mode,
                 ];
 
                 if ($data->id_mode == 1)
-                    $annotation['time_end_annotation'] = $data->limit_prj;
-                else if($data->id_mode == 2)
+                    $annotation['time_end_annotation'] = (new DateTime())->modify("+{$data->limit_prj} minutes")->format('Y-m-d H:i:s');
+                else if ($data->id_mode == 2)
                     $annotation['nb_annotation_remaining'] = $data->limit_prj;
+
+                session()->put('annotation', $annotation);
             }
         }
 
         return view($view, [
-            "now" => $now,
             "data" => $data,
             "pictures" => $pictures,
             "number" => $number,
@@ -106,30 +124,32 @@ class AnnotationController extends Controller
 
     }
 
-    public function annotate(AnnotationRequest $request,  $id)
+    /**
+     * @param AnnotationRequest $request
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function annotate(AnnotationRequest $request, $id)
     {
-       
+
         Annotation::create(
             [
-                "id_exp"=> session('expert')['id'],
+                "id_exp" => session('expert')['id'],
                 "id_cat" => $request->category,
-                "id_data" =>$request->id_data,
+                "id_data" => $request->id_data,
                 "date" => new DateTime(),
                 "expert_sample_confidence_level" => $request->expert_sample_confidence_level
             ]
         );
         $project = Project::findOrFail($id);
 
-        if(session('annotation')['id_mode'] == 2)
+        if (session('annotation')['id_mode'] == 2)
             session()->put('annotation.nb_annotation_remaining', session('annotation')['nb_annotation_remaining'] - 1);
 
         if ($project->id_int === 1) {
 
-            /**
-             * When expert has reached the limit
-             */
-            if (session()->has('annotation.nb_annotation_remaining') && session('annotation')['nb_annotation_remaining'] <= 0
-                ) {
+            // When expert has reached the limit
+            if (session()->has('annotation.nb_annotation_remaining') && session('annotation')['nb_annotation_remaining'] <= 0) {
 
                 session()->forget('annotation'); // unset session annotation
 
@@ -154,7 +174,6 @@ class AnnotationController extends Controller
                 return redirect()->route('project.list')->with('success', 'Thanks for annotation, You can annotate again this project ' . $dateLimit);
             } else {
                 return redirect()->route('project.annotate', compact('id'));
-                //return view('project.annotation.general', ["now" => session('now'), "data" => session('data'), "pictures" => session('pictures'), "number" => $number, "number_pictures" => $number_pictures, "categorys" => session('categorys')]);
             }
         }
         /*
@@ -165,13 +184,12 @@ class AnnotationController extends Controller
             session()->put('annotation', $annotation);
             return view('project.annotation.triple', ["now" => $now, "data" => $data, "pictures" => $pictures]);
         }*/
-        
-        
+
+
         /*$date = \App\Date::create([
             "date" => new DateTime(),
         ]);*/
-        
 
-        
+
     }
 }

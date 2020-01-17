@@ -18,6 +18,7 @@ class AnnotationRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
+     * The min and max correspond at the constraints in database
      *
      * @return array
      */

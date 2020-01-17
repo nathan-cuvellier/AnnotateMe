@@ -47,7 +47,7 @@
         </div>
     @endif
     @if(session()->has('warning'))
-        <div class="alert alert-danger w-50 mx-auto" role="alert">
+        <div class="alert alert-warning w-50 mx-auto" role="alert">
             <p class="text-center m-0"><b>{{ session('warning') }}</b></p>
         </div>
     @endif
@@ -57,36 +57,35 @@
         </div>
     @endif
     @if(session()->has('error'))
-        <div class="alert alert-warning w-50 mx-auto" role="alert">
+        <div class="alert alert-danger w-50 mx-auto" role="alert">
             <p class="text-center m-0"><b>{{ session('error') }}</b></p>
         </div>
-    @else
-        <div class="d-flex justify-content-start flex-wrap">
-            @foreach($projectsList as $projet)
-                <div class="w-30 mx-2 mt-4">
-                    <div class="card h-100">
-                        <h5 class="card-header text-nowrap text-truncate">{{ str_replace('_', ' ', $projet->name_prj) }}</h5>
-                        <div class="card-body">
-                            <h5 class="card-title">{{ $projet->label_int }}</h5>
-                            @if(!is_null($projet->desc_prj))
-                                @if(strlen($projet->desc_prj) > 100)
-                                    <p class="card-text">{{ substr($projet->desc_prj,0,100) }}...</p>
-                                @else
-                                    <p class="card-text">{{ $projet->desc_prj }}</p>
-                                @endif
+    @endif
+
+    <div class="d-flex justify-content-start flex-wrap">
+        @foreach($projectsList as $projet)
+            <div class="w-30 mx-2 mt-4">
+                <div class="card h-100">
+                    <h5 class="card-header text-nowrap text-truncate">{{ str_replace('_', ' ', $projet->name_prj) }}</h5>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ $projet->label_int }}</h5>
+                        @if(!is_null($projet->desc_prj))
+                            @if(strlen($projet->desc_prj) > 100)
+                                <p class="card-text">{{ substr($projet->desc_prj,0,100) }}...</p>
                             @else
-                                <p class="card-text"><i>The project has no description...</i></p>
+                                <p class="card-text">{{ $projet->desc_prj }}</p>
                             @endif
-                        </div>
-                        <div class="card-footer">
-                            <a href="{{ route('project.read', ['id' => $projet->id_prj]) }}"
-                               class="w-100 btn btn-primary">Go</a>
-                        </div>
+                        @else
+                            <p class="card-text"><i>The project has no description...</i></p>
+                        @endif
+                    </div>
+                    <div class="card-footer">
+                        <a href="{{ route('project.read', ['id' => $projet->id_prj]) }}"
+                           class="w-100 btn btn-primary">Go</a>
                     </div>
                 </div>
+            </div>
 
-            @endforeach
-        </div>
-
-    @endif
+        @endforeach
+    </div>
 </div>

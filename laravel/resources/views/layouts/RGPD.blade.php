@@ -33,7 +33,6 @@
                 setCookie('rgpd', '4bc4528703b62bf381a6fbaec0b802db7ab8edc7', 30 * 6)
                 document.body.removeChild(document.querySelector('footer'))
             })
-            console.log(btnRGPD)
         }
 
     })

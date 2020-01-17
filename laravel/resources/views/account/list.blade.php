@@ -45,7 +45,6 @@
                     <div class="my-1">
                         <button type="submit" id="send-search" class="btn btn-primary">Rechercher</button>
                     </div>
-
                 </form>
             </div>
 

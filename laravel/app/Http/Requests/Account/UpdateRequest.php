@@ -25,14 +25,17 @@ class UpdateRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
+     * The min and max correspond at the constraints in database
      *
      * @return array
      */
     public function rules()
     {
-        $expert = Expert::find($this->route('id'));
+        $expert = Expert::find($this->route('id')); // select expert from id in URL (param id)
 
-
+        /**
+         * Check if password write in form (current_pwd_exp) corresponding to the password in expert table
+         */
         Validator::extend('check_hashed_pass', function ($attribute, $value, $parameters) {
             return Hash::check($value, $parameters[0]);
         });
@@ -51,15 +54,22 @@ class UpdateRequest extends FormRequest
             'pwd_exp' => 'nullable|confirmed',
         ];
 
+        // authorize a superadmin to update the type of expert in superadmin on other account
         if($expert->type_exp == 'superadmin')
             $rules['type_exp'] .= ',superadmin';
 
+        // check the constraint if expert change his email
         if ($this->request->get('mail_exp') != $expert->mail_exp)
         	$rules['mail_exp'] .= '|unique:expert,mail_exp';
 
+        // check the constraint if expert change his phone number
         if($this->request->get('tel_exp') != $expert->tel_exp)
         	$rules['tel_exp'] .= '|unique:expert,tel_exp';
 
+        /**
+         * If expert type equals to expert, it need to fill his actually password,
+         * This rule create above, check if the password write in form correspond to the password hash in expert table
+         */
         if (session('expert')['type'] == 'expert') 
         	$rules['current_pwd_exp'] = 'check_hashed_pass:' . $expert->pwd_exp;
 
