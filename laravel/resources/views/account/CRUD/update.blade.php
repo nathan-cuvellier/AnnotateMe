@@ -7,7 +7,7 @@
                 <h2>Update account</h2>
             </div>
             <form class="w-100 p-4" method="POST"
-                  action="{{ route('account.update.post', ['id' => $expert->id_exp]) }}">
+                  action="{{ route('account.update', ['id' => $expert->id_exp]) }}">
                 @csrf
 
                 <div class="row">

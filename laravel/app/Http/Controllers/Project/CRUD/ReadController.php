@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Project;
+namespace App\Http\Controllers\Project\CRUD;
 
 use App\Http\Controllers\Controller;
 use App\LimitAnnotation;
@@ -11,6 +11,11 @@ use Illuminate\Http\Request;
 
 class ReadController extends Controller
 {
+    /**
+     * @param $id
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     * @throws \Exception
+     */
     public function show($id)
     {
         $participations = Participation::query()
@@ -48,7 +53,7 @@ class ReadController extends Controller
         }
 
         if(!$access)
-            return redirect()->route('project.list')->with('notAllowed','You do not have access to this project.');
+            return redirect()->route('project.list')->with('error','You do not have access to this project.');
 
         return view ('project.CRUD.read',['project' => $data, 'canAnnotate' => $canAnnotate]);
 

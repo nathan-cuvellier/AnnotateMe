@@ -19,7 +19,7 @@
                 </div>
                 <div>
                     @if($project->id_mode == 1)
-                        <p>Duration : {{$project->limit_prj}}s</p>
+                        <p>Duration : {{$project->limit_prj}}min</p>
                     @else
                         <p>Duration : {{$project->limit_prj}} annotation(s)</p>
                     @endif
@@ -32,12 +32,12 @@
         </div>
         <div class="row mr-3">
 
-            <a href="{{route('project.annotate',['id'=>$project->id_prj]) }}" class="@if($canAnnotate == false) disabled @endif mx-2 btn btn-primary">Start
+            <a href="{{route('project.annotate',['id'=>$project->id_prj]) }}" class="@if($canAnnotate == false) disabled @endif mx-2 btn btn-primary">Start to
                 annotate</a>
             @if(session('expert')['id'] == $project->id_exp || session('expert')['type'] == 'superadmin')
                 <a href="{{route('project.update',['id'=>$project->id_prj]) }}" class="mx-2 btn btn-primary">Update
                     Project</a>
-                <a href="" class="mx-2 btn btn-primary">Export data</a>
+                <a href="{{route('project.export',['id'=>$project->id_prj]) }}" class="mx-2 btn btn-primary">Export data</a>
                 <button type="button" class="mx-2 btn btn-danger" data-toggle="modal" data-target="#delete">
                     Delete project
                 </button>

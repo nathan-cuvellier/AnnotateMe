@@ -28,7 +28,7 @@
                     <div class="custom-control custom-checkbox">
                         <input type="checkbox" class="custom-control-input checkboxanswer{{$i}}" id="customCheck" name="answers[{{$i}}]">
                         <label class="custom-control-label" for="answer{{$i}}">
-                            Bouton  Bouton  Bouton  Bouton  Bouton  Bouton  Bouton  Bouton  Bouton  Bouton
+                            Bouton  Bouton  Bouton  Bouton  Bdsdn  Bouton  Bouton  Bouton  Bouton  Bouton
                         </label>
                     </div>
                 </button>
@@ -52,7 +52,7 @@
                             b.classList.add("bg-primary")
                         }
 
-                        document.querySelector(".checkbox" + this.id).checked = true;  
+                        document.querySelector(".checkbox" + this.id).checked = true;
                         this.classList.add("bg-primary")
                         this.classList.remove("bg-light")
                     }
@@ -67,7 +67,7 @@
         <h5 class="mt-5 ml-5">Are you confident with your answer?</h5>
         <!-- voir slider a https://css-tricks.com/value-bubbles-for-range-inputs/ -->
         <div class="d-flex flex-row justify-content-sm-between">
-            
+
             <input type="range" class="custom-range testRange " min="1" max="3" step="1" id="customRange3">
             <a class="btn btn-primary ml-3 text-light">Next</a>
         </div>
@@ -80,65 +80,9 @@
 </div>
 @endsection
 
-<style type="text/css">
-    .testRange {
-        -webkit-appearance: none; /* Hides the slider so that custom slider can be made */
-        width: 90%; /* Specific width is required for Firefox. */
-        background: transparent; /* Otherwise white in Chrome */
-    }
-
-
-    .testRange::-webkit-slider-thumb {
-        -webkit-appearance: none;
-        border: 1px solid #000000;
-        height: 20px;
-        margin-top: -10px;
-        width: 20px;
-        border-radius: 50px;
-        background: #F8F9FA;
-        cursor: pointer;
-        box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d; /* Add cool effects to your sliders! */
-    }
-
-    .testRange::-webkit-slider-runnable-track {
-        width: 90%;
-        height: 2px;
-        cursor: pointer;
-
-        background: black;
-        border-radius: 5px;
-        border: 0.2px solid #010101;
-    }
-    .divDisplay{
-        width: 90%;
-        text-align: center;
-    }
-    .dd{
-        background: #F8F9FA;
-        color: black;
-        font-size: 1.5em;
-        padding: 20px;
-        border-radius: 5px;
-    }
-    .h-32{
-        text-align: center;
-    }
-    .activeB{
-        background-color: grey !important;
-    }
-    .getH{
-    }
-
-    .btn-select {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-</style>
 <script>
 
-    
+
     let range = document.getElementById("customRange3")
     let dd1 = document.getElementById("dd1")
     let dd2 = document.getElementById("dd2")
@@ -193,9 +137,9 @@
             console.log( button.classList);
             nbButtons++
         })
-    } 
+    }
     let heightButtons = 100/nbButtons + "%"
     console.log(heightButtons)
     buttons.style.height =  heightButtons
-    
+
 </script>

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Project;
+namespace App\Http\Controllers\Project\CRUD;
 
 use App\Category;
 use App\Data;
@@ -17,11 +17,18 @@ use Illuminate\Http\Request;
 class DeleteController extends Controller
 {
 
+    /**
+     * DeleteController constructor.
+     */
     public function __construct()
     {
-        $this->middleware('HighGrade');
+        $this->middleware('HighGrade'); // just admin or superadmin
     }
 
+    /**
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function delete($id)
     {
 

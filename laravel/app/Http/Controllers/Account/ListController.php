@@ -15,9 +15,11 @@ class ListController extends Controller
      */
     public function __construct()
     {
-        //$this->middleware('HighGrade');
     }
 
+    /**
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     function list()
     {
         $expertsDB = Expert::query()

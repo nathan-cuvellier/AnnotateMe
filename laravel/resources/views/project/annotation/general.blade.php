@@ -7,16 +7,17 @@
         <div class="container">
             <div class="row">
                 <div class="col">
-                    <h2>{{ $data->name_prj }}</h2>
+                    <h2>{{ str_replace('_', ' ', $data->name_prj) }}</h2>
                 </div>
 
                 <div class="col-md-auto">
                     @if(session('annotation')['id_mode'] == 2)
                         <p>Remains : {{ session('annotation')['nb_annotation_remaining'] }} </p>
+                    @else
+                        <p id="time">Remains : loading...</p>
                     @endif
+
                 </div>
-
-
             </div>
 
             <div class="row mt-4">
@@ -27,8 +28,8 @@
                 </div>
                 <div class="col-sm getH">
 
-                    @foreach ($categorys as $category)
-                        <!-- <button type="button" id="answer{{$category->id_cat}}"
+                @foreach ($categorys as $category)
+                    <!-- <button type="button" id="answer{{$category->id_cat}}"
                                 class="btn-select btn bg-light py-2 rounded h-32" data-toggle="button"
                                 aria-pressed="false" autocomplete="off">-->
                         <div class="custom-control custom-checkbox">
@@ -65,67 +66,7 @@
         </div>
     </form>
 
-    <style type="text/css">
 
-        .testRange {
-            -webkit-appearance: none; /* Hides the slider so that custom slider can be made */
-            width: 90%; /* Specific width is required for Firefox. */
-            background: transparent; /* Otherwise white in Chrome */
-        }
-
-
-        .testRange::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            border: 1px solid #000000;
-            height: 20px;
-            margin-top: -10px;
-            width: 20px;
-            border-radius: 50px;
-            background: #F8F9FA;
-            cursor: pointer;
-            box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d; /* Add cool effects to your sliders! */
-        }
-
-        .testRange::-webkit-slider-runnable-track {
-            width: 90%;
-            height: 2px;
-            cursor: pointer;
-
-            background: black;
-            border-radius: 5px;
-            border: 0.2px solid #010101;
-        }
-
-        .divDisplay {
-            width: 90%;
-            text-align: center;
-        }
-
-        .dd {
-            background: #F8F9FA;
-            color: black;
-            font-size: 1.5em;
-            padding: 20px;
-            border-radius: 5px;
-        }
-
-        .h-32 {
-
-            text-align: center;
-
-        }
-
-        .activeB {
-            background-color: grey !important;
-        }
-
-        .getH {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-around;
-        }
-
-    </style>
     <script>
 
 
@@ -182,12 +123,38 @@
             })
         }
         let heightButtons = 100 / nbButtons + "%"
-        buttons.style.height = heightButtons
+        //buttons.style.height = heightButtons
 
+        {{-- If the limit of project is in time --}}
+        @if(session()->has('annotation.time_end_annotation'))
+            let countDown = () => {
+                let date_limit = new Date("{{ session()->get('annotation.time_end_annotation') }}")
+
+                let now = 0
+
+                $.ajax({
+                    url: "{{ asset('date.php') }}",
+                    complete: function (response) {
+                        now = new Date(response.responseText)
+
+                        let diff = (date_limit - now) / 1000
+                        let minutes = Math.floor(diff / 60)
+                        diff -= minutes * 60
+                        let secondes = Math.floor(diff)
+                        document.querySelector('#time').innerText = "Remains : " + minutes + ":" + secondes
+
+                    },
+                    error: function () {
+                        document.querySelector('#time').innerText = "Remains : Error"
+                    }
+                })
+            }
+
+            countDown()
+
+            setInterval(countDown, 1000);
+        @endif
+    
     </script>
-    </div>
-
-
-
-    </div>
+    
 @endsection
