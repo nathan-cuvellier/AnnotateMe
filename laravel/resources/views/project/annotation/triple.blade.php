@@ -63,6 +63,9 @@
 
 <div>
  <!--   <label for="customRange3">Example range</label> -->
+ <a href="https://bootsnipp.com/snippets/Zl6ql">Idée Triple</a>
+ <a href="https://bootsnipp.com/snippets/4ak9">Idée 2</a>
+
  <h5 class="mt-5 ml-5">Your awnser is confident ?</h5>
    <input type="range" class="custom-range testRange " min="1" max="3" step="1" id="customRange3">
     <a class="btn btn-primary m-3 text-light">Next</a>

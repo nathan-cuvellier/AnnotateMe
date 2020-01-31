@@ -32,10 +32,10 @@
                     <!-- <button type="button" id="answer{{$category->id_cat}}"
                                 class="btn-select btn bg-light py-2 rounded h-32" data-toggle="button"
                                 aria-pressed="false" autocomplete="off">-->
-                        <div class="custom-control custom-checkbox">
-                            <input type="radio" class="checkboxanswer{{$category->id_cat}}"
+                        <div class="custom-control custom-checkbox rounded ">
+                            <input type="radio" class="checkboxanswer{{$category->id_cat}} pl-2"
                                    id="customCheck{{$category->id_cat}}" name="category" value="{{$category->id_cat}}">
-                            <label for="customCheck{{$category->id_cat}}">
+                            <label for="customCheck{{$category->id_cat}}" class="w-75 pt-2 pb-1">
                                 {{$category['label_cat']}}
                             </label>
                         </div>
@@ -47,10 +47,10 @@
 
             <div>
                 <!--   <label for="customRange3">Example range</label> -->
-                <h5 class="mt-5 ml-5">Are you confident with your answer ?</h5>
+                <h5 class="mt-5 ml-5">Confidence:</h5>
                 <input type="range" class="custom-range testRange " name="expert_sample_confidence_level" min="1"
                        max="3" step="1" id="customRange3">
-                <input type="submit" name="valider" value="Next" class="btn btn-primary m-3 text-light">
+                <input type="submit" name="valider" value="Next" id="next" class="btn btn-primary m-3 text-light">
                 <div class="divDisplay">
                     <div class=" d-none dd" id="dd1">
                         Not Confident
@@ -66,10 +66,7 @@
         </div>
     </form>
 
-
     <script>
-
-
         let range = document.getElementById("customRange3")
         let dd1 = document.getElementById("dd1")
         let dd2 = document.getElementById("dd2")
@@ -112,13 +109,11 @@
                 dd3.classList.add("d-inline-block")
             }
 
-
         })
         let nbButtons = 3
         for (button of buttons) {
             button.addEventListener("click", function () {
-                this.classList.add("activeB");
-                console.log(button.classList);
+                this.classList.add("activeB")
                 nbButtons++
             })
         }
@@ -127,32 +122,45 @@
 
         {{-- If the limit of project is in time --}}
         @if(session()->has('annotation.time_end_annotation'))
-            let countDown = () => {
-                let date_limit = new Date("{{ session()->get('annotation.time_end_annotation') }}")
+            
+        
 
-                let now = 0
+        let countDown = () => {
+            let date_limit = new Date("{{ session()->get('annotation.time_end_annotation') }}")
 
-                $.ajax({
-                    url: "{{ asset('date.php') }}",
-                    complete: function (response) {
-                        now = new Date(response.responseText)
+            let now = 0
+            let calcDiff = 1
 
-                        let diff = (date_limit - now) / 1000
-                        let minutes = Math.floor(diff / 60)
-                        diff -= minutes * 60
-                        let secondes = Math.floor(diff)
-                        document.querySelector('#time').innerText = "Remains : " + minutes + ":" + secondes
+            $.ajax({
+                url: "{{ asset('date.php') }}",
+                complete: function (response) {
+                    now = new Date(response.responseText)
 
-                    },
-                    error: function () {
-                        document.querySelector('#time').innerText = "Remains : Error"
+                    let diff = (date_limit - now) / 1000
+                    let minutes = Math.floor(diff / 60)
+                    diff -= minutes * 60
+                    let secondes = Math.floor(diff)
+                    document.querySelector('#time').innerText = "Remains : " + minutes + ":" + secondes
+                    calcDiff = (date_limit - now) / 1000
+                    if(calcDiff <= 0) {
+                        document.querySelector('#time').innerText = "Elapsed time, last annotation"
+                        clearInterval(idCountDown)
                     }
-                })
-            }
 
-            countDown()
 
-            setInterval(countDown, 1000);
+                },
+                error: function () {
+                    document.querySelector('#time').innerText = "Remains : Error"
+                }
+            })
+        }
+
+        countDown()
+
+        let idCountDown = setInterval(countDown, 1000);
+            
+
+            
         @endif
     
     </script>

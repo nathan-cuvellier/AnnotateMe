@@ -159,6 +159,11 @@
                         </div>
                     </div>
 
+                    <div class="form-check">
+                        <input type="checkbox" name="online_prj" id="online_prj" class="form-check-input" aria-describedby="limitHelpInline" checked="checked">
+                        <label class="form-check-label" for="online_prj">Project online</label>
+                    </div>
+
                     <div class="form-group row p-3">
                         <button type="submit" class="form-control btn btn-primary">
                             Save Project

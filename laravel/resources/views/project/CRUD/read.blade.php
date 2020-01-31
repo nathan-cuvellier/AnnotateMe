@@ -7,7 +7,7 @@
                 {{ session('update') }}
             </div>
         @endif
-        <p class="col-10 display-4 mt-5 p-0">{{ str_replace('_', ' ', $project->name_prj) }}</p>
+        <p class="col-10 display-4 mt-5 p-0">@if(!$project->online_prj) [OFFLINE] @endif {{ str_replace('_', ' ', $project->name_prj) }}</p>
         <div>
             <div class="text-left">
                 <div>
@@ -32,7 +32,7 @@
         </div>
         <div class="row mr-3">
 
-            <a href="{{route('project.annotate',['id'=>$project->id_prj]) }}" class="@if($canAnnotate == false) disabled @endif mx-2 btn btn-primary">Start to
+            <a @if($project->online_prj || $canAnnotate == false) href="{{route('project.annotate',['id'=>$project->id_prj]) }}" @endif class="@if(!$project->online_prj || $canAnnotate == false) disabled text-white @endif  mx-2 btn btn-primary">Start to
                 annotate</a>
             @if(session('expert')['id'] == $project->id_exp || session('expert')['type'] == 'superadmin')
                 <a href="{{route('project.update',['id'=>$project->id_prj]) }}" class="mx-2 btn btn-primary">Update

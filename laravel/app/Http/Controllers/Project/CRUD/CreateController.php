@@ -76,6 +76,7 @@ class CreateController extends Controller
             'id_exp' => $id_exp,
             'limit_prj' => $data['limit_prj'],
             'waiting_time_prj' => $data['waiting_time_prj'],
+            'online_prj' => isset($data['online_prj']),
         ]);
 
         //Test if there is no problem with the zip file
@@ -415,7 +416,7 @@ class CreateController extends Controller
             }
         }
 
-        dd($nbLineCount);
+        //dd($nbLineCount);
         if ($nbLineCount <=1 )
         {
             return "Error, categories.txt must have at least 2 lines";

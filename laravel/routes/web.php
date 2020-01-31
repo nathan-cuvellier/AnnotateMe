@@ -1,4 +1,8 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 session()->start();
 //\Debugbar::disable();
 /*
@@ -47,7 +51,7 @@ Route::group(['prefix' => 'project'], function () {
     Route::post('/{id}/delete', 'Project\CRUD\DeleteController@delete')->name('project.delete');
 
     Route::get('/{id}/annotate', 'Project\AnnotationController@show')->name('project.annotate');
-    Route::post('/{id}/annotate', 'Project\AnnotationController@annotate')->name('project.annotate.post');;
+    Route::post('/{id}/annotate', 'Project\AnnotationController@annotate')->name('project.annotate.post');
 
     //Route for the creation of a new project
     Route::get('/create', 'Project\CRUD\CreateController@create')->name('project.create');
