@@ -46,7 +46,6 @@ class ReadController extends Controller
             }
         }
 
-
         foreach ($participations as $participation) {
             if ($id == $participation->id_prj)
                 $access = true;

@@ -24,11 +24,34 @@ class ListController extends Controller
 
         $checkParticipeInAtLeastOneProject = $query;
 
-        if(count($checkParticipeInAtLeastOneProject->get()) === 0) // return to the project.list
+        if (count($checkParticipeInAtLeastOneProject->get()) === 0) // return to the project.list
             return view('project.list', ['noProjectFound' => 'You don\'t participate in any project']);
 
         $query->join('project', 'project.id_prj', '=', 'participation.id_prj')
             ->join('interface', 'interface.id_int', '=', 'project.id_int');
+
+        // Display only projects "online" for users of type expert
+        if ($expert['type'] == "expert")
+            $query->where('online_prj', true);
+        
+        /**
+         * Display only projects "online" for users of type admin
+         * Or display projects "offline" if the admin is the owner of the project
+         * 
+         * EXAMPLE : 
+         * select * from "participation"
+         * inner join "project" on "project"."id_prj" = "participation"."id_prj" inner join "interface" on "interface"."id_int" = "project"."id_int"
+         * where "participation"."id_exp" = 28 and ("project"."online_prj" = 1 or ("project"."online_prj" = 0 and "project"."id_exp" = 28))
+         */
+        if($expert['type'] == "admin") {
+            $query->where(function($q) use ($expert){
+                $q->where('project.online_prj', true)
+                ->orWhere(function($q2) use($expert) {
+                    $q2->where('project.online_prj', false)
+                    ->where('project.id_exp', $expert['id']);
+                });
+            });   
+        }
 
         $search = false;
         if (isset($request->searchSend)) {
@@ -51,5 +74,4 @@ class ListController extends Controller
 
         return view('project.list', compact('projectsList', 'interfaces', 'sessionsMode', 'search'));
     }
-
 }

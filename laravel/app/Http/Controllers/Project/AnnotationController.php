@@ -14,6 +14,7 @@ use App\Participation;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Session;
 use App\Annotation;
+use Illuminate\Support\Facades\Redirect;
 
 class AnnotationController extends Controller
 {
@@ -29,6 +30,18 @@ class AnnotationController extends Controller
             ->where('id_prj', $id)
             ->first();
 
+        $data = Project::query()
+            ->join('data', 'project.id_prj', '=', 'data.id_prj')
+            ->join('session_mode', 'session_mode.id_mode', '=', 'project.id_mode')
+            ->join('category', 'category.id_prj', '=', 'project.id_prj')
+            ->join('interface', 'interface.id_int', '=', 'project.id_int')
+            ->where('project.id_prj', $id)
+            ->first();
+
+        // If there is a problem during the creation of project, the data (pictures) or categories, may not be created, so $data is null 
+        if (is_null($data))
+            return redirect()->route('project.list')->with('error', 'Error project not found');
+
         if (!is_null($limitAnnotation)) {
             $now = new DateTime();
             $dateLimit = new DateTime($limitAnnotation->date_limit_annotation);
@@ -40,28 +53,18 @@ class AnnotationController extends Controller
             } else {
                 $limitAnnotation->delete();
             }
-
         }
 
-        $data = Project::query()
-            ->join('data', 'project.id_prj', '=', 'data.id_prj')
-            ->join('session_mode', 'session_mode.id_mode', '=', 'project.id_mode')
-            ->join('category', 'category.id_prj', '=', 'project.id_prj')
-            ->join('interface', 'interface.id_int', '=', 'project.id_int')
-            ->where('project.id_prj', $id)
-            ->first();
+        if (!$data->online_prj)
+            return redirect()->route('project.list')->with('warning', 'the project "' . $data->name_prj . '" is offline');
 
-        // If there is a problem during the creation of project, the data (pictures) or categories, may not be created, so $data is null 
-        if(is_null($data))
-            return redirect()->route('project.list')->with('error', 'Error project not found');
-        
         // Get particpation, in order to check if the expert is allow to access at this page
         $participation = Participation::query()
             ->where('id_prj', $id)
             ->where('id_exp', session('expert')['id'])
             ->first();
 
-        if(is_null($participation))
+        if (is_null($participation))
             return abort(403);
 
         $pictures = Data::query()
@@ -120,8 +123,6 @@ class AnnotationController extends Controller
             "number_pictures" => $number_pictures,
             "categorys" => $categorys,
         ]);
-
-
     }
 
     /**
@@ -131,7 +132,7 @@ class AnnotationController extends Controller
      */
     public function annotate(AnnotationRequest $request, $id)
     {
-
+        
         Annotation::create(
             [
                 "id_exp" => session('expert')['id'],
@@ -147,34 +148,7 @@ class AnnotationController extends Controller
             session()->put('annotation.nb_annotation_remaining', session('annotation')['nb_annotation_remaining'] - 1);
 
         if ($project->id_int === 1) {
-
-            // When expert has reached the limit
-            if (session()->has('annotation.nb_annotation_remaining') && session('annotation')['nb_annotation_remaining'] <= 0) {
-
-                session()->forget('annotation'); // unset session annotation
-
-                $limitAnnotation = LimitAnnotation::query()
-                    ->where('id_prj', $id)
-                    ->where('id_exp', session('expert')['id'])
-                    ->first();
-
-                $project = Project::find($id);
-
-                if (is_null($limitAnnotation)) {
-                    $limitAnnotation = LimitAnnotation::create([
-                        'id_exp' => session('expert')['id'],
-                        'id_prj' => $id,
-                        'date_limit_annotation' => (new DateTime())->modify("+{$project->waiting_time_prj} hours")
-                    ]);
-                } else {
-                    $limitAnnotation->update(['date_limit_annotation' => (new DateTime())->modify("+{$project->waiting_time_prj} hours")]);
-                }
-                $dateLimit = ($limitAnnotation->date_limit_annotation)->format('\t\h\e d F \a\t H:i');
-
-                return redirect()->route('project.list')->with('success', 'Thanks for annotation, You can annotate again this project ' . $dateLimit);
-            } else {
-                return redirect()->route('project.annotate', compact('id'));
-            }
+            return $this->setLimit($project);
         }
         /*
         else if (session('data')["id_int"] === 2) {
@@ -189,7 +163,43 @@ class AnnotationController extends Controller
         /*$date = \App\Date::create([
             "date" => new DateTime(),
         ]);*/
+    }
 
+    /**
+     * setLimit
+     *
+     * @param  mixed $project
+     *
+     * @return void
+     */
+    public function setLimit(Project $project)
+    {
+        $id = $project->id_prj;
+        // When expert has reached the limit
+        if ((session()->has('annotation.nb_annotation_remaining') && session('annotation')['nb_annotation_remaining'] <= 0)
+            || (session()->has('annotation.time_end_annotation') && (new DateTime() >= new DateTime(session()->get('annotation.time_end_annotation'))))
+        ) {
+            session()->forget('annotation'); // unset session annotation
 
+            $limitAnnotation = LimitAnnotation::query()
+                ->where('id_prj', $id)
+                ->where('id_exp', session('expert')['id'])
+                ->first();
+
+            if (is_null($limitAnnotation)) {
+                $limitAnnotation = LimitAnnotation::create([
+                    'id_exp' => session('expert')['id'],
+                    'id_prj' => $id,
+                    'date_limit_annotation' => (new DateTime())->modify("+{$project->waiting_time_prj} hours")
+                ]);
+            } else {
+                $limitAnnotation->update(['date_limit_annotation' => (new DateTime())->modify("+{$project->waiting_time_prj} hours")]);
+            }
+            $dateLimit = ($limitAnnotation->date_limit_annotation)->format('\t\h\e d F \a\t H:i');
+
+            return redirect()->route('project.list')->with('success', 'Thanks for annotation, You can annotate again this project ' . $dateLimit . ' (UTC +1)');
+        } else {
+            return redirect()->route('project.annotate', compact('id'));
+        }
     }
 }

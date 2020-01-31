@@ -20,5 +20,6 @@ class Project extends Model
         'value_mode',
         'limit_prj',
         'waiting_time_prj',
+        'online_prj'
     ];
 }

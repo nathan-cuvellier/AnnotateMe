@@ -63,24 +63,24 @@
     @endif
 
     <div class="d-flex justify-content-start flex-wrap">
-        @foreach($projectsList as $projet)
+        @foreach($projectsList as $project)
             <div class="w-30 mx-2 mt-4">
                 <div class="card h-100">
-                    <h5 class="card-header text-nowrap text-truncate">{{ str_replace('_', ' ', $projet->name_prj) }}</h5>
+                    <h5 class="card-header text-nowrap text-truncate">@if(!$project->online_prj) [OFFLINE] @endif {{ str_replace('_', ' ', $project->name_prj) }}</h5>
                     <div class="card-body">
-                        <h5 class="card-title">{{ $projet->label_int }}</h5>
-                        @if(!is_null($projet->desc_prj))
-                            @if(strlen($projet->desc_prj) > 100)
-                                <p class="card-text">{{ substr($projet->desc_prj,0,100) }}...</p>
+                        <h5 class="card-title">{{ $project->label_int }}</h5>
+                        @if(!is_null($project->desc_prj))
+                            @if(strlen($project->desc_prj) > 100)
+                                <p class="card-text">{{ substr($project->desc_prj,0,100) }}...</p>
                             @else
-                                <p class="card-text">{{ $projet->desc_prj }}</p>
+                                <p class="card-text">{{ $project->desc_prj }}</p>
                             @endif
                         @else
                             <p class="card-text"><i>The project has no description...</i></p>
                         @endif
                     </div>
                     <div class="card-footer">
-                        <a href="{{ route('project.read', ['id' => $projet->id_prj]) }}"
+                        <a href="{{ route('project.read', ['id' => $project->id_prj]) }}"
                            class="w-100 btn btn-primary">Go</a>
                     </div>
                 </div>

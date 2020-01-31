@@ -53,6 +53,7 @@ class UpdateController extends Controller
             'id_mode' => $data['id_mode'],
             'limit_prj' => $data['limit_prj'],
             'waiting_time_prj' => (int) $data['waiting_time_prj'],
+            'online_prj' => isset($data['online_prj']),
         ];
 
         $participation = Participation::query()
@@ -72,9 +73,11 @@ class UpdateController extends Controller
         foreach ($experts as $expert) {
             Participation::create(['id_prj' => $id, 'id_cptlvl' => 1, 'id_exp' => $expert->id_exp]);
         }
-
-
+        
         $project->update($updateProject);
+
+
+        
 
         return redirect()->route('project.read', ['id' => $id])->with('update', 'The project has been updated');
     }
