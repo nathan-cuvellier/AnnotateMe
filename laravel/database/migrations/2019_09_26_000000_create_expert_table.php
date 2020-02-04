@@ -22,7 +22,7 @@ class CreateExpertTable extends Migration
             $table->date('bd_date_exp');
             $table->string('sex_exp', 50);
             $table->string('address_exp', 50);
-            $table->integer('pc_exp');
+            $table->string('pc_exp', 10);
             $table->string('mail_exp',50)->unique();
             $table->string('tel_exp',50)->unique();
             $table->string('city_exp',50);

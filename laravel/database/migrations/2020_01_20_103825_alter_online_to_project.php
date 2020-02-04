@@ -14,9 +14,7 @@ class AlterOnlineToProject extends Migration
     public function up()
     {
         Schema::table('project', function (Blueprint $table) {
-            Schema::table('project', function (Blueprint $table) {
-                $table->boolean('online_prj')->default(true);
-            });
+            $table->boolean('online_prj')->default(true);
         });
     }
 

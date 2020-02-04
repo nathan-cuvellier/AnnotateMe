@@ -47,12 +47,27 @@ class DeleteController extends Controller
         if(session('expert')['id'] == $expert->id_exp)
             session()->forget('expert');
 
+        $expert->update([
+            'name_exp' => NULL,
+            'firstname_exp' => NULL,
+            'bd_date_exp' => NULL,
+            'sex_exp' => NULL,
+            'address_exp' => NULL,
+            'pc_exp' => NULL,
+            'mail_exp' => NULL,
+            'tel_exp' => NULL,
+            'city_exp' => NULL,
+            'pwd_exp' => NULL,
+        ]);
+        
+        /*
         Participation::query()
             ->where('id_exp',$id)
             ->delete();
 
         Expert::find($id)
             ->delete();
+        */
 
         return redirect()->route('project.list')->with('success','Account deleted with success !');
     }

@@ -25,7 +25,8 @@ class ListController extends Controller
         $expertsDB = Expert::query()
             ->orderBy('type_exp', 'ASC')
             ->orderBy('name_exp')
-            ->orderBy('firstname_exp');
+            ->orderBy('firstname_exp')
+            ->whereNotNull('mail_exp');
 
         if (isset($_GET['type']))
             $expertsDB->whereIn('type_exp', $_GET['type']);
