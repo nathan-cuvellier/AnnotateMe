@@ -15,7 +15,10 @@ class ReadController extends Controller
      */
     public function view($id)
     {
-        $expert = Expert::find($id);
+        $expert = Expert::query()
+            ->whereNotNull('mail_exp')
+            ->where('id_exp', $id)
+            ->first();
 
         if (is_null($expert) && session('expert')['type'] != "expert")
             return redirect()->route('account.list')->with('warning', "Account n°$id not found");
