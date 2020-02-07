@@ -52,7 +52,7 @@
                         <div class="custom-control custom-checkbox rounded ">
                             <input type="radio" class="d-none pl-2"
                                    id="customCheck{{$category->id_cat}}" name="category" value="{{$category->id_cat}}">
-                            <label for="customCheck{{$category->id_cat}}" class="w-75 pt-2 pb-1 btn btn-outline-primary">
+                            <label for="customCheck{{$category->id_cat}}" class="w-75 pt-2 pb-2 btn btn-outline-primary">
                                 {{$category['label_cat']}}
                             </label>
                         </div>

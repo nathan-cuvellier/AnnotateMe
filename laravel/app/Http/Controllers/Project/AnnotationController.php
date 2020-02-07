@@ -82,8 +82,19 @@ class AnnotationController extends Controller
         else
             $view = 'project.annotation.triple';
 
+        $total_nb_annotation = Data::query()->where('id_prj', $id)->sum('nbannotation_data');
+        $images = Data::query()->where('id_prj', $id)->get();
+
+        foreach ($images as $image)
+        {
+            $image->priority_data = ($image->nbannotation_data/ ($total_nb_annotation + 1));
+            $image->save();
+        }
+
         $number_pictures = count($pictures);
-        $number = rand(0, $number_pictures - 1);
+
+        //$number = rand(0, $number_pictures - 1);
+        $number = $this->min_prop($pictures, 'priority_data');
 
         if (!session()->has('annotation')) {
             $annotation = [
@@ -142,6 +153,16 @@ class AnnotationController extends Controller
                 "expert_sample_confidence_level" => $request->expert_sample_confidence_level
             ]
         );
+
+        $total_nb_annotation = Data::query()->where('id_prj', $id)->sum('nbannotation_data');
+
+        $image = Data::find($request->id_data);
+        if($image) {
+            $image->nbannotation_data = $image->nbannotation_data + 1;
+            $image->priority_data = ($image->nbannotation_data/ ($total_nb_annotation + 1));
+            $image->save();
+        }
+
         $project = Project::findOrFail($id);
 
         if (session('annotation')['id_mode'] == 2)
@@ -201,5 +222,21 @@ class AnnotationController extends Controller
         } else {
             return redirect()->route('project.annotate', compact('id'));
         }
+    }
+
+    public function min_prop($array, $prop) {
+        $min = 0;
+        $id_min = 0;
+
+        foreach($array as $key => $value)
+        {
+            $temp = $value->$prop;
+            if ($temp < $min)
+            {
+                $id_min = $key;
+                $min = $temp;
+            }
+        }
+        return $id_min;
     }
 }

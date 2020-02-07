@@ -68,7 +68,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="waiting_time_prj" class="col-form-label" title="waiting time between each annotation session of the project">Waiting time (in hour)</label>
+                    <label for="waiting_time_prj" class="col-form-label" title="waiting time between each annotation session of the project">Waiting time (in Minute)</label>
 
                     <input type="number" min="0" required="required" name="waiting_time_prj" id="waiting_time_prj" value="{{ $project->waiting_time_prj }}" class="form-control @error('waiting_time_prj') is-invalid @enderror" aria-describedby="limitHelpInline">
                     <small id="limitHelpInline" class="text-muted">
@@ -103,7 +103,6 @@
                     <hr class="my-2">
                     <div class="d-flex justify-content-left flex-wrap">
                         @foreach ($experts as $expert)
-                        @if($expert->id_exp != session('expert')['id'] || $expert->type_exp != 'superadmin')
                         <div id="expert{{$expert->id_exp}}" class="form-group px-2 expert">
                             <button type="button" class="btn btn-primary" data-toggle="button" aria-pressed="false">
                                 <div class="custom-control custom-checkbox">
@@ -117,7 +116,6 @@
                                 </div>
                             </button>
                         </div>
-                        @endif
                         @endforeach
                     </div>
                 </div>
@@ -125,7 +123,7 @@
                 <div class="form-check">
                     <input type="checkbox" name="online_prj" id="online_prj" @if($project->online_prj) checked="checked" @endif class="form-check-input @error('online_prj') is-invalid @enderror" aria-describedby="limitHelpInline">
                     <label class="form-check-label" for="online_prj">Project online</label>
-                
+
                     @error('online_prj')
                     <span class="invalid-feedback" role="alert">
                         <strong>{{ $message }}</strong>
