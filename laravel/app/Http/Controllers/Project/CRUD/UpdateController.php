@@ -18,9 +18,13 @@ class UpdateController extends Controller
      */
     public function show($id)
     {
-        $project = Project::find($id);
+        $project = Project::findOrFail($id);
         $sessionModes = SessionMode::all();
-        $experts = Expert::all();
+        $experts = Expert::query()
+            ->where('type_exp', '<>', 'superadmin') // not select the superadmins, in order to put it by default in the project
+            ->where('id_exp', '<>', session('expert')['id']) // not select the owner, in order to put it by default in the project
+            ->whereNotNull('mail_exp') // if user is delete
+            ->get();
 
         if($project->id_exp != session('expert')['id'] && session('expert')['type'] != 'superadmin')
             return abort(403);

@@ -32,7 +32,11 @@ class CreateController extends Controller
     {
         $sessionModes = SessionMode::all();
         $interfaceModes = InterfaceMode::all();
-        $experts = Expert::all();
+        $experts = Expert::query()
+            ->where('type_exp', '<>', 'superadmin') // not select the superadmins, in order to put it by default in the project
+            ->where('id_exp', '<>', session('expert')['id']) // not select the owner, in order to put it by default in the project
+            ->whereNotNull('mail_exp') // if user is delete
+            ->get();
 
         return view('project.CRUD.create', [
             "sessionModes" => $sessionModes,
@@ -61,10 +65,11 @@ class CreateController extends Controller
                 ->whereIn('id_exp', array_keys($data['experts']))
                 ->orWhere('type_exp', 'superadmin')
                 ->orWhere('id_exp', session('expert')['id'])
+                ->whereNotNull('mail_exp')
                 ->get();
         } else {
             //Default attribution to all experts
-            $experts = Expert::All();
+            $experts = Expert::query()->whereNotNull('mail_exp')->get();
         }
 
         //Create the project
@@ -375,7 +380,10 @@ class CreateController extends Controller
                 $extention = strtolower(str_replace('.', '', substr($value, strrpos($value, '.'))));
 
                 if (in_array($extention, $extentions) != false) {
-                    Data::create(['pathname_data' => $pathrelative . $value, 'id_prj' => $prj->id_prj]);
+                    Data::create(['pathname_data' => $pathrelative . $value, 
+                                'id_prj' => $prj->id_prj, 
+                                'priority_data' => 1,
+                                'nbannotation_data' => 0]);
                 }
 
             }
