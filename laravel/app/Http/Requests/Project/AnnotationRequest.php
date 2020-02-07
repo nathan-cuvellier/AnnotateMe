@@ -2,7 +2,11 @@
 
 namespace App\Http\Requests\Project;
 
+use App\Data;
+use App\Category;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Request;
+
 
 class AnnotationRequest extends FormRequest
 {
@@ -22,13 +26,32 @@ class AnnotationRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(Request $request)
     {
-        return [
-            'category' => 'required',
-            'id_data' => 'required',
-            'expert_sample_confidence_level' => 'required|min:1|max:3',
+        $reqCategory = Category::query()
+            ->select('id_cat')
+            ->where('id_prj', $this->route('id'))
+            ->get(); // select categories from id in URL (param id)
 
+        $categoriesId = array_map(function($v) {
+            return $v['id_cat'];
+        }, $reqCategory->toArray());
+
+        $reqData = Data::query()
+            ->select('id_data')
+            ->where('id_prj', $this->route('id'))
+            ->get(); // select categories from id in URL (param id)
+
+        $datasId = array_map(function($v) {
+            return $v['id_data'];
+        }, $reqData->toArray());
+
+        //dd(in_array($request->category, $categoriesId));
+
+        return [
+            'category' => 'required|in:'. implode(',', $categoriesId),
+            'id_data' => 'required|in:' . implode(',', $datasId),
+            'expert_sample_confidence_level' => 'required|min:1|max:3',
         ];
     }
 }
