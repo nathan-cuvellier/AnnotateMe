@@ -2,6 +2,23 @@
 
 @section('content')
 
+    
+    @error('id_data')
+    <div class="container">
+        <div class="d-flex justify-content-center">
+            <div class="alert alert-warning w-50 text-center" role="alert"><b>Error</b></div>
+        </div>
+    </div>
+    @enderror
+
+    @error('category')
+    <div class="container">
+        <div class="d-flex justify-content-center">
+            <div class="alert alert-warning w-50 text-center" role="alert"><b>You must select a category</b></div>
+        </div>
+    </div>
+    @enderror
+
     <form method="post" action="{{ route('project.annotate.post', ['id' => $data->id_prj]) }}">
         @csrf
         <div class="container">
@@ -33,9 +50,9 @@
                                 class="btn-select btn bg-light py-2 rounded h-32" data-toggle="button"
                                 aria-pressed="false" autocomplete="off">-->
                         <div class="custom-control custom-checkbox rounded ">
-                            <input type="radio" class="checkboxanswer{{$category->id_cat}} pl-2"
+                            <input type="radio" class="d-none pl-2"
                                    id="customCheck{{$category->id_cat}}" name="category" value="{{$category->id_cat}}">
-                            <label for="customCheck{{$category->id_cat}}" class="w-75 pt-2 pb-1">
+                            <label for="customCheck{{$category->id_cat}}" class="w-75 pt-2 pb-1 btn btn-outline-primary">
                                 {{$category['label_cat']}}
                             </label>
                         </div>
@@ -120,47 +137,55 @@
         let heightButtons = 100 / nbButtons + "%"
         //buttons.style.height = heightButtons
 
+        /// get all categories
+        let lis = document.querySelectorAll('[for^="customCheck"]')
+        console.log(lis)
+        lis.forEach((category) => {
+            category.addEventListener('click', () => {
+                lis.forEach((category) => {
+                    category.classList.add('btn-outline-primary')
+                    category.classList.remove('btn-primary')
+                })
+                category.classList.remove('btn-outline-primary')
+                category.classList.add('btn-primary')
+            })
+        })
+
         {{-- If the limit of project is in time --}}
         @if(session()->has('annotation.time_end_annotation'))
-            
-        
+            let countDown = () => {
+                let date_limit = new Date("{{ session()->get('annotation.time_end_annotation') }}")
 
-        let countDown = () => {
-            let date_limit = new Date("{{ session()->get('annotation.time_end_annotation') }}")
+                let now = 0
+                let calcDiff = 1
 
-            let now = 0
-            let calcDiff = 1
+                $.ajax({
+                    url: "{{ asset('date.php') }}",
+                    complete: function (response) {
+                        now = new Date(response.responseText)
 
-            $.ajax({
-                url: "{{ asset('date.php') }}",
-                complete: function (response) {
-                    now = new Date(response.responseText)
+                        let diff = (date_limit - now) / 1000
+                        let minutes = Math.floor(diff / 60)
+                        diff -= minutes * 60
+                        let secondes = Math.floor(diff)
+                        document.querySelector('#time').innerText = "Remains : " + minutes + ":" + secondes
+                        calcDiff = (date_limit - now) / 1000
+                        if(calcDiff <= 0) {
+                            document.querySelector('#time').innerText = "Elapsed time, last annotation"
+                            clearInterval(idCountDown)
+                        }
 
-                    let diff = (date_limit - now) / 1000
-                    let minutes = Math.floor(diff / 60)
-                    diff -= minutes * 60
-                    let secondes = Math.floor(diff)
-                    document.querySelector('#time').innerText = "Remains : " + minutes + ":" + secondes
-                    calcDiff = (date_limit - now) / 1000
-                    if(calcDiff <= 0) {
-                        document.querySelector('#time').innerText = "Elapsed time, last annotation"
-                        clearInterval(idCountDown)
+
+                    },
+                    error: function () {
+                        document.querySelector('#time').innerText = "Remains : Error"
                     }
+                })
+            }
 
+            countDown()
 
-                },
-                error: function () {
-                    document.querySelector('#time').innerText = "Remains : Error"
-                }
-            })
-        }
-
-        countDown()
-
-        let idCountDown = setInterval(countDown, 1000);
-            
-
-            
+            let idCountDown = setInterval(countDown, 1000);
         @endif
     
     </script>
