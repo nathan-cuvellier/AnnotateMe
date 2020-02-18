@@ -3,6 +3,7 @@
 namespace Tests\Feature\Account;
 
 use App\Expert;
+use Exception;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Hash;
@@ -103,25 +104,31 @@ class ReadTest extends TestCase
      */
     public function testExpertReadAccountOfAdmin()
     {
-        $admin = Expert::create([
-            'name_exp' => 'name',
-            'firstname_exp' => 'firstname',
-            'bd_date_exp' => '2000/01/01',
-            'sex_exp' => 'name',
-            'address_exp' => '9 rue de l\'arc en ciel',
-            'pc_exp' => '74000',
-            'mail_exp' => 'admin@annotate.com',
-            'tel_exp' => '0601020304',
-            'city_exp' => 'Annecy',
-            'pwd_exp' => Hash::make('123'),
-            'type_exp' => 'admin',
-        ]);
+        try {
+            $admin = Expert::create([
+                'name_exp' => 'name',
+                'firstname_exp' => 'firstname',
+                'bd_date_exp' => '2000/01/01',
+                'sex_exp' => 'name',
+                'address_exp' => '9 rue de l\'arc en ciel',
+                'pc_exp' => '74000',
+                'mail_exp' => 'admin@annotate.com',
+                'tel_exp' => '0601020304',
+                'city_exp' => 'Annecy',
+                'pwd_exp' => Hash::make('123'),
+                'type_exp' => 'admin',
+            ]);
+    
+            $this->withSession(['expert' => ['id' => 99, 'type' => 'expert']])
+                ->get(route('account.read', ['id' => $admin->id_exp]))
+                ->assertStatus(403);
+        } catch(Exception $e) {
+            echo $e->getMessage();
+        } finally {
+            $admin->delete();
+        }  
+        
 
-        $this->withSession(['expert' => ['id' => 99, 'type' => 'expert']])
-            ->get(route('account.read', ['id' => $admin->id_exp]))
-            ->assertStatus(403);
-
-        $admin->delete();
     }
 
     /**
@@ -133,25 +140,29 @@ class ReadTest extends TestCase
      */
     public function testExpertReadAccountOfSuperadmin()
     {
-        $superadmin = Expert::create([
-            'name_exp' => 'name',
-            'firstname_exp' => 'firstname',
-            'bd_date_exp' => '2000/01/01',
-            'sex_exp' => 'name',
-            'address_exp' => '9 rue de l\'arc en ciel',
-            'pc_exp' => '74000',
-            'mail_exp' => 'superadmin@annotate.com',
-            'tel_exp' => '0601020305',
-            'city_exp' => 'Annecy',
-            'pwd_exp' => Hash::make('123'),
-            'type_exp' => 'superadmin',
-        ]);
-
-        $this->withSession(['expert' => ['id' => 99, 'type' => 'expert']])
-            ->get(route('account.read', ['id' => $superadmin->id_exp]))
-            ->assertStatus(403);
-
-        $superadmin->delete();
+        try {
+            $superadmin = Expert::create([
+                'name_exp' => 'name',
+                'firstname_exp' => 'firstname',
+                'bd_date_exp' => '2000/01/01',
+                'sex_exp' => 'name',
+                'address_exp' => '9 rue de l\'arc en ciel',
+                'pc_exp' => '74000',
+                'mail_exp' => 'superadmin@annotate.com',
+                'tel_exp' => '0601020305',
+                'city_exp' => 'Annecy',
+                'pwd_exp' => Hash::make('123'),
+                'type_exp' => 'superadmin',
+            ]);
+    
+            $this->withSession(['expert' => ['id' => 99, 'type' => 'expert']])
+                ->get(route('account.read', ['id' => $superadmin->id_exp]))
+                ->assertStatus(403);
+        } catch(Exception $e) {
+            echo $e->getMessage();
+        } finally {
+            $superadmin->delete();
+        }  
     }
 
 
@@ -168,25 +179,29 @@ class ReadTest extends TestCase
      */
     public function testAdminReadAccountOfAnOtherAdmin()
     {
-        $admin = Expert::create([
-            'name_exp' => 'name',
-            'firstname_exp' => 'firstname',
-            'bd_date_exp' => '2000/01/01',
-            'sex_exp' => 'name',
-            'address_exp' => '9 rue de l\'arc en ciel',
-            'pc_exp' => '74000',
-            'mail_exp' => 'admin@annotate.com',
-            'tel_exp' => '0601020304',
-            'city_exp' => 'Annecy',
-            'pwd_exp' => Hash::make('123'),
-            'type_exp' => 'admin',
-        ]);
-
-        $this->withSession(['expert' => ['id' => 99, 'type' => 'admin']])
-            ->get(route('account.read', ['id' => $admin->id_exp]))
-            ->assertStatus(403);
-
-        $admin->delete();
+        try {
+            $admin = Expert::create([
+                'name_exp' => 'name',
+                'firstname_exp' => 'firstname',
+                'bd_date_exp' => '2000/01/01',
+                'sex_exp' => 'name',
+                'address_exp' => '9 rue de l\'arc en ciel',
+                'pc_exp' => '74000',
+                'mail_exp' => 'admin@annotate.com',
+                'tel_exp' => '0601020304',
+                'city_exp' => 'Annecy',
+                'pwd_exp' => Hash::make('123'),
+                'type_exp' => 'admin',
+            ]);
+    
+            $this->withSession(['expert' => ['id' => 99, 'type' => 'admin']])
+                ->get(route('account.read', ['id' => $admin->id_exp]))
+                ->assertStatus(403);
+        } catch(Exception $e) {
+            echo $e->getMessage();
+        } finally {
+            $admin->delete();
+        }
     }
 
     /**
@@ -198,25 +213,29 @@ class ReadTest extends TestCase
      */
     public function testAdminReadAccountOfAnOtherSuperadmin()
     {
-        $admin = Expert::create([
-            'name_exp' => 'name',
-            'firstname_exp' => 'firstname',
-            'bd_date_exp' => '2000/01/01',
-            'sex_exp' => 'name',
-            'address_exp' => '9 rue de l\'arc en ciel',
-            'pc_exp' => '74000',
-            'mail_exp' => 'admin@annotate.com',
-            'tel_exp' => '0601020304',
-            'city_exp' => 'Annecy',
-            'pwd_exp' => Hash::make('123'),
-            'type_exp' => 'admin',
-        ]);
-
-        $this->withSession(['expert' => ['id' => 99, 'type' => 'admin']])
-            ->get(route('account.read', ['id' => $admin->id_exp]))
-            ->assertStatus(403);
-
-        $admin->delete();
+        try {
+            $admin = Expert::create([
+                'name_exp' => 'name',
+                'firstname_exp' => 'firstname',
+                'bd_date_exp' => '2000/01/01',
+                'sex_exp' => 'name',
+                'address_exp' => '9 rue de l\'arc en ciel',
+                'pc_exp' => '74000',
+                'mail_exp' => 'admin@annotate.com',
+                'tel_exp' => '0601020304',
+                'city_exp' => 'Annecy',
+                'pwd_exp' => Hash::make('123'),
+                'type_exp' => 'admin',
+            ]);
+    
+            $this->withSession(['expert' => ['id' => 99, 'type' => 'admin']])
+                ->get(route('account.read', ['id' => $admin->id_exp]))
+                ->assertStatus(403);
+        } catch(Exception $e) {
+            echo $e->getMessage();
+        } finally {
+            $admin->delete();
+        }
     }
 
 

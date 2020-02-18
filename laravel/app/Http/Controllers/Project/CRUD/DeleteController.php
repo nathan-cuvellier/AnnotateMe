@@ -31,6 +31,11 @@ class DeleteController extends Controller
      */
     public function delete($id)
     {
+        $project = Project::findOrFail($id);
+
+        // Delete only if superadmin or if he is the owner of the project
+        if(session('expert')['id'] != $project->id_exp && session('expert')['type'] != "superadmin")
+            return abort(403);
 
         $categories = Category::query()
             ->select('id_cat')
@@ -71,8 +76,7 @@ class DeleteController extends Controller
         //dd(glob(__DIR__ . '/../../../../public/storage/app/datas/'.$project->name_prj.'/*'));
         //rmdir(__DIR__ . '/../../../../public/storage/app/datas/'. $project->name_prj);
 
-        Project::find($id)
-            ->delete();
+        $project->delete();
 
         return redirect()->route('project.list')->with('success', 'Project deleted with success !');
     }

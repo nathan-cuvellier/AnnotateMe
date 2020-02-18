@@ -9,6 +9,7 @@ use App\Project;
 use App\Category;
 use App\Data;
 use DateTime;
+use Exception;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
@@ -59,7 +60,7 @@ class AnnotateTest extends TestCase
                 ->get(route('project.annotate', ['id' => $project->id_prj]))
                 ->assertStatus(403);
         } catch(Exception $e) {
-            var_dump($e);
+            echo $e->getMessage();
         } finally {
             $data->delete();
             $category->delete();
@@ -106,7 +107,7 @@ class AnnotateTest extends TestCase
                 ->assertSessionHas('error')
                 ->assertRedirect(route('project.list'));
         } catch(Exception $e) {
-            var_dump($e);
+            echo $e->getMessage();
         } finally {
             $category->delete();
             $project->delete();
@@ -153,7 +154,7 @@ class AnnotateTest extends TestCase
                 ->assertSessionHas('error')
                 ->assertRedirect(route('project.list'));
         } catch(Exception $e) {
-            var_dump($e);
+            echo $e->getMessage();
         } finally {
             $data->delete();
             $project->delete();

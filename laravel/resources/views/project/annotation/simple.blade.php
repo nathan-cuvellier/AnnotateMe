@@ -2,144 +2,149 @@
 
 @section('content')
 
-<div class="container">
-    <div class="row">
-        <div class="col">
-            <h2>Project Name</h2>
-        </div>
-
-        <div class="col-md-auto">
-            <p>Annoted: 10</p>
-        </div>
-
-        <div class="col-md-auto">
-            <p>10/43</p>
+    @error('id_data')
+    <div class="container">
+        <div class="d-flex justify-content-center">
+            <div class="alert alert-warning w-50 text-center" role="alert"><b>Error</b></div>
         </div>
     </div>
+    @enderror
 
-    <div class="row">
-        <div  class="col-xl">
-            <img class="img-fluid rounded" src="https://www.sciencesetavenir.fr/assets/img/2019/04/10/cover-r4x3w1000-5cadebdd93968-trou-noir-galaxie.jpg">
-        </div>
-
-        <div  class="col-sm getH btn-group-vertical">
-            @for($i=1; $i<= 5; $i++)
-                <button type="button" id="answer{{$i}}" class="btn-select btn bg-light py-2 rounded h-32" data-toggle="button" aria-pressed="false" autocomplete="off">
-                    <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input checkboxanswer{{$i}}" id="customCheck" name="answers[{{$i}}]">
-                        <label class="custom-control-label" for="answer{{$i}}">
-                            Bouton  Bouton  Bouton  Bouton  Bdsdn  Bouton  Bouton  Bouton  Bouton  Bouton
-                        </label>
-                    </div>
-                </button>
-            @endfor
+    @error('category')
+    <div class="container">
+        <div class="d-flex justify-content-center">
+            <div class="alert alert-warning w-50 text-center" role="alert"><b>You must select a category</b></div>
         </div>
     </div>
+    @enderror
 
-    <script>
+    <form method="post" action="{{ route('project.annotate.post', ['id' => $data->id_prj]) }}">
+        @csrf
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <h2>{{ str_replace('_', ' ', $data->name_prj) }}</h2>
+                </div>
 
-        document.addEventListener('DOMContentLoaded',function(){
-            let btnselects = document.getElementsByClassName("btn-select")
+                <div class="col-md-auto">
+                    @if(session('annotation')['id_mode'] == 2)
+                        <p>Remains : {{ session('annotation')['nb_annotation_remaining'] }} </p>
+                    @else
+                        <p id="time">Remains : loading...</p>
+                    @endif
 
-            for(let btnselect of btnselects)
-            {
-                btnselect.addEventListener('click', function(){
-                    let check = document.querySelector(".checkbox" + this.id)
-                    if (check.checked == false) {
-                        for(let b of btnselects) {
-                            document.querySelector(".checkbox" + b.id).checked = false
-                            b.classList.add("bg-light")
-                            b.classList.add("bg-primary")
-                        }
+                </div>
+            </div>
 
-                        document.querySelector(".checkbox" + this.id).checked = true;
-                        this.classList.add("bg-primary")
-                        this.classList.remove("bg-light")
+            <div class="row mt-4">
+                <div class="col-sm" >
+                    <img class="img-display rounded" style="margin: 0 auto;display: block;"
+                         src="{{ asset('storage/app/datas/' . $pictures[$number[0]]['pathname_data']) }}">
+                    <input type="hidden" name="id_data" value="{{ $pictures[$number[0]]['id_data'] }}">
+                </div>
+
+                <div class="inputs col-sm">
+                    @foreach ($categorys as $category)
+                        <div class="stacked custom-control custom-checkbox rounded ">
+                            <input type="radio" class="d-none pl-2"
+                                   id="customCheck{{$category->id_cat}}" name="category" value="{{$category->id_cat}}">
+                            <label for="customCheck{{$category->id_cat}}" class="btn btn-outline-primary">
+                                {{$category['label_cat']}}
+                            </label>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+
+            <div class="container">
+                <div class="row">
+                    <h5 class="col-sm- pt-3">Confidence:</h5>
+                    <input class="col custom-range testRange" type="range" name="expert_sample_confidence_level" min="1" max="3" step="1" id="customRange3">
+
+                    <button type="submit" class="btn-block btn btn-lg btn-primary" id="next">Next</button>
+                </div>
+            </div>
+        </div>
+    </form>
+    
+    <style type="text/css">
+        .inputs {
+            display: flex;
+            flex-direction: column;
+        }
+        .stacked { 
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+
+            padding: 0px;
+        }
+
+        .stacked label {
+            height: 100%;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2em;
+        }
+    </style>
+
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function(){
+            let bNext = document.querySelector("#next")
+            bNext.disabled = true
+
+            let bInputs = document.querySelectorAll(".stacked label")
+            for (let bInput of bInputs) {
+
+                bInput.addEventListener("click", function(){
+                    for (let b of bInputs) {
+                        b.classList.add('btn-outline-primary')
+                        b.classList.remove('btn-primary')
                     }
+
+                    this.classList.remove('btn-outline-primary')
+                    this.classList.add('btn-primary')
+
+                    bNext.disabled = false;
                 })
             }
         })
+            {{-- If the limit of project is in time --}}
+        @if(session()->has('annotation.time_end_annotation'))
+            let countDown = () => {
+                let date_limit = new Date("{{ session()->get('annotation.time_end_annotation') }}")
 
+                let now = 0
+                let calcDiff = 1
+
+                $.ajax({
+                    url: "{{ asset('date.php') }}",
+                    complete: function (response) {
+                        now = new Date(response.responseText)
+
+                        let diff = (date_limit - now) / 1000
+                        let minutes = Math.floor(diff / 60)
+                        diff -= minutes * 60
+                        let secondes = Math.floor(diff)
+                        document.querySelector('#time').innerText = "Remains : " + minutes + ":" + secondes
+                        calcDiff = (date_limit - now) / 1000
+                        if(calcDiff <= 0) {
+                            document.querySelector('#time').innerText = "Elapsed time, last annotation"
+                            clearInterval(idCountDown)
+                        }
+                    },
+                    error: function () {
+                        document.querySelector('#time').innerText = "Remains : Error"
+                    }
+                })
+            }
+
+            countDown()
+
+            let idCountDown = setInterval(countDown, 1000);
+        @endif
     </script>
-
-    <div>
-        <!--   <label for="customRange3">Example range</label> -->
-        <h5 class="mt-5 ml-5">Are you confident with your answer?</h5>
-        <!-- voir slider a https://css-tricks.com/value-bubbles-for-range-inputs/ -->
-        <div class="d-flex flex-row justify-content-sm-between">
-
-            <input type="range" class="custom-range testRange " min="1" max="3" step="1" id="customRange3">
-            <a class="btn btn-primary ml-3 text-light">Next</a>
-        </div>
-        <div class="divDisplay">
-            <div class=" d-none dd" id="dd1">Not Confident</div>
-            <div class=" d-inline-block dd" id="dd2">Average</div>
-            <div class=" d-none dd" id="dd3">Really Confident</div>
-        </div>
-    </div>
-</div>
 @endsection
-
-<script>
-
-
-    let range = document.getElementById("customRange3")
-    let dd1 = document.getElementById("dd1")
-    let dd2 = document.getElementById("dd2")
-    let dd3 = document.getElementById("dd3")
-    let buttons = document.getElementsByClassName("h-32")
-    let divButton = document.getElementsByClassName("getH")
-
-    console.log(dd1)
-    range.addEventListener("change", function() {
-
-
-    if (range.value == 1) {
-
-        dd1.classList.remove("d-none");
-        dd1.classList.add("d-inline-block")
-
-        dd2.classList.add("d-none")
-        dd2.classList.remove("d-inline-block");
-
-        dd3.classList.add("d-none")
-        dd3.classList.remove("d-inline-block");
-    } else if (range.value == 2) {
-
-        dd1.classList.add("d-none")
-        dd1.classList.remove("d-inline-block");
-
-        dd2.classList.add("d-inline-block")
-        dd2.classList.remove("d-none");
-
-        dd3.classList.add("d-none")
-        dd3.classList.remove("d-inline-block");
-
-    } else if (range.value == 3) {
-
-        dd1.classList.add("d-none")
-        dd1.classList.remove("d-inline-block");
-
-        dd2.classList.add("d-none")
-        dd2.classList.remove("d-inline-block");
-
-        dd3.classList.remove("d-none");
-        dd3.classList.add("d-inline-block")
-    }
-
-
-
-    })
-    let nbButtons = 3
-    for(button of buttons){
-        button.addEventListener("click",function(){
-            this.classList.add("activeB");
-            console.log( button.classList);
-            nbButtons++
-        })
-    }
-    let heightButtons = 100/nbButtons + "%"
-    console.log(heightButtons)
-    buttons.style.height =  heightButtons
-
-</script>
