@@ -61,7 +61,7 @@ class ExportTest extends TestCase
                 ->get(route('project.export', ['id' => $project->id_prj]))
                 ->assertForbidden();
         } catch(Exception $e) {
-            var_dump($e);
+            echo $e->getMessage();
         } finally {
             $data->delete();
             $category->delete();

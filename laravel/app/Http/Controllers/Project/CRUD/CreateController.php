@@ -10,6 +10,8 @@ use App\Expert;
 use App\Project;
 use App\Data;
 use App\Category;
+use App\Annotation;
+use App\LimitAnnotation;
 use App\Http\Requests\Project\CreateRequest;
 use DateTime;
 use Illuminate\Http\Request;
@@ -89,6 +91,7 @@ class CreateController extends Controller
 
         //If there is ,no problem
         if ($zipfiletest === true) {
+
             //Add experts participation
             foreach ($experts as $expert) {
                 $participation = Participation::create([
@@ -100,10 +103,8 @@ class CreateController extends Controller
             return redirect(route('project.list'));
         } else {
 
-            //dd($prj);
             //If there is an error, delete the project
-            $this->CancelProject($prj->id);
-
+            $this->CancelProject($prj->id_prj);
 
             //Return errors with the return of $zipfiletest
             return back()->withInput()->with('ZipError', $zipfiletest);
@@ -217,6 +218,7 @@ class CreateController extends Controller
                 return $createdataserror;
             }
 
+            
             //Use the createcategories function to insert the categories from the categories.txt file into the database
             $createcategorieserror = $this->createcategories($pathtoproject, $prj);
             
@@ -228,7 +230,7 @@ class CreateController extends Controller
                 //return the error message to the page
                 return $createcategorieserror;
             }
-
+            
             //If there is no problem, return true
             return true;
         }
@@ -380,14 +382,17 @@ class CreateController extends Controller
                 $extention = strtolower(str_replace('.', '', substr($value, strrpos($value, '.'))));
 
                 if (in_array($extention, $extentions) != false) {
+
                     Data::create(['pathname_data' => $pathrelative . $value, 
                                 'id_prj' => $prj->id_prj, 
                                 'priority_data' => 1,
                                 'nbannotation_data' => 0]);
+                    
                 }
 
             }
         }
+
         return true;
     }
 
@@ -446,9 +451,13 @@ class CreateController extends Controller
             Category::create(['label_cat' => 'No', 'id_prj' => $prj->id_prj, 'num_line' => 2]);
             Category::create(['label_cat' => 'I don\'t know', 'id_prj' => $prj->id_prj, 'num_line' => 3]);
         } else {
-            Category::create(['label_cat' => 'Image 1', 'id_prj' => $prj->id_prj, 'num_line' => 1]);
-            Category::create(['label_cat' => 'Image 2', 'id_prj' => $prj->id_prj, 'num_line' => 2]);
-            Category::create(['label_cat' => 'I don\'t know', 'id_prj' => $prj->id_prj, 'num_line' => 3]);
+            $images = Data::query()->where('id_prj', $prj->id_prj)->get();
+            $line_num = 1;
+            foreach ($images as $image)
+            {
+                Category::create(['label_cat' => $image->id_data, 'id_prj' => $prj->id_prj, 'num_line' => $line_num]);
+                $line_num++;
+            }
         }
 
         return true;
@@ -467,12 +476,14 @@ class CreateController extends Controller
             ->get()
             ->toArray();
 
+
         $datas = Data::query()
             ->select('id_data')
             ->where('id_prj', $id)
             ->get()
             ->toArray();
 
+        
         Annotation::query()
             ->whereIn('id_cat', $categories)
             ->whereIn('id_data', $datas)
@@ -493,12 +504,10 @@ class CreateController extends Controller
         LimitAnnotation::query()
             ->with('id_prj', $id)
             ->delete();
-
-
+        
         $project = Project::findOrFail($id);
         system('rm -rf ' . __DIR__ . '/../../../../public/storage/app/datas/' . str_replace(' ', '\ ', $project->name_prj));
 
-        Project::find($id)
-            ->delete();
+        $project->delete();
     }
 }

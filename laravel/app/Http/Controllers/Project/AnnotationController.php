@@ -67,34 +67,8 @@ class AnnotationController extends Controller
         if (is_null($participation))
             return abort(403);
 
-        $pictures = Data::query()
-            ->where('data.id_prj', $id)->get();
-
-        $categorys = Category::query()
-            ->where('category.id_prj', $id)->get();
-
-        //$annotation = ['id_prj' => $data['id_prj'], 'mode' => $data['id_mode'], 'valeur_annotation' => $data['limit_prj'], 'nb_annotation' => 0];
-
-        if ($data->id_int === 1)
-            $view = 'project.annotation.general';
-        else if ($data->id_int === 2)
-            $view = 'project.annotation.double';
-        else
-            $view = 'project.annotation.triple';
-
-        $total_nb_annotation = Data::query()->where('id_prj', $id)->sum('nbannotation_data');
-        $images = Data::query()->where('id_prj', $id)->get();
-
-        foreach ($images as $image)
-        {
-            $image->priority_data = ($image->nbannotation_data/ ($total_nb_annotation + 1));
-            $image->save();
-        }
-
+        $pictures = Data::query()->where('data.id_prj', $id)->get();
         $number_pictures = count($pictures);
-
-        //$number = rand(0, $number_pictures - 1);
-        $number = $this->min_prop($pictures, 'priority_data');
 
         if (!session()->has('annotation')) {
             $annotation = [
@@ -127,6 +101,36 @@ class AnnotationController extends Controller
             }
         }
 
+
+        if ($data->id_int === 1)
+        {
+            $categorys = Category::query()->where('category.id_prj', $id)->get();
+            $number = $this->max_img($pictures, 1);
+            $view = 'project.annotation.simple';
+        }
+        else if ($data->id_int === 2)
+        {
+            $categorys = Category::query()->where('category.id_prj', $id)->get();
+            $number = $this->max_img($pictures, 2);
+            $view = 'project.annotation.double';
+        }
+        else
+        {
+            $categorys = [];
+
+            $number = $this->max_img($pictures, 3);
+
+            foreach ($number as $value)
+            {
+                $image_id = $pictures[$value]->id_data;
+                //dd($image_id);
+
+                $categorys[] = Category::query()->where(
+                    ['category.id_prj' => $id, 'category.label_cat' => $image_id])->first();
+            }
+            $view = 'project.annotation.triple';
+        }
+
         return view($view, [
             "data" => $data,
             "pictures" => $pictures,
@@ -134,6 +138,37 @@ class AnnotationController extends Controller
             "number_pictures" => $number_pictures,
             "categorys" => $categorys,
         ]);
+
+        //$annotation = ['id_prj' => $data['id_prj'], 'mode' => $data['id_mode'], 'valeur_annotation' => $data['limit_prj'], 'nb_annotation' => 0];
+        /*
+        if ($data->id_int === 1)
+        {
+            $view = 'project.annotation.simple';
+        }
+        else if ($data->id_int === 2)
+        {
+            $view = 'project.annotation.double';
+        }
+        else
+        {
+            $view = 'project.annotation.triple';
+        }
+        */
+
+        //$images = Data::query()->where('id_prj', $id)->get();
+        //$total_nb_annotation = $images->sum('nbannotation_data');
+
+        //$number = $this->max_img($pictures, 3); //$this->max_prop($pictures, 'priority_data');
+
+        /*
+        foreach ($images as $image)
+        {
+            $image->priority_data = ($image->nbannotation_data/ ($total_nb_annotation + 1));
+            $image->save();
+        }
+        */
+
+        
     }
 
     /**
@@ -157,11 +192,14 @@ class AnnotationController extends Controller
         $total_nb_annotation = Data::query()->where('id_prj', $id)->sum('nbannotation_data');
 
         $image = Data::find($request->id_data);
+
         if($image) {
             $image->nbannotation_data = $image->nbannotation_data + 1;
-            $image->priority_data = ($image->nbannotation_data/ ($total_nb_annotation + 1));
+            //$image->priority_data = ($image->nbannotation_data/ ($total_nb_annotation + 1));
             $image->save();
         }
+
+        $this->set_priority($id);
 
         $project = Project::findOrFail($id);
 
@@ -169,6 +207,14 @@ class AnnotationController extends Controller
             session()->put('annotation.nb_annotation_remaining', session('annotation')['nb_annotation_remaining'] - 1);
 
         if ($project->id_int === 1) {
+            return $this->setLimit($project);
+        }
+        else if ($project->id_int === 2)
+         {
+        }
+        else
+        {
+
             return $this->setLimit($project);
         }
         /*
@@ -224,19 +270,61 @@ class AnnotationController extends Controller
         }
     }
 
-    public function min_prop($array, $prop) {
+    public function max_prop($array, $prop) {
         $min = 0;
         $id_min = 0;
 
         foreach($array as $key => $value)
         {
             $temp = $value->$prop;
-            if ($temp < $min)
+            if ($temp >= $min)
             {
                 $id_min = $key;
                 $min = $temp;
             }
         }
         return $id_min;
+    }
+
+    public function max_img($images, $nb = 1)
+    {
+        $min = [];
+        $id_min = [];
+
+        for ($i=0; $i < $nb; $i++)
+        {
+            $min[] = 0;
+            $id_min[] = 0;
+        }
+
+        foreach ($images as $k => $v)
+        {
+            $prio = $v->priority_data;
+            $min_prio_id = array_search(min($min), $min);
+
+            if ($prio > $min[$min_prio_id])
+            {
+                $min[$min_prio_id] = $prio;
+                $id_min[$min_prio_id] = $k;
+            }
+        }
+
+        return $id_min;
+    }
+
+    public function set_priority($id) {
+
+        $images = Data::query()->where('id_prj', $id)->get();
+        $total = $images->sum('nbannotation_data');
+
+        foreach ($images as $image)
+        {
+            $nb = $image->nbannotation_data;
+            $priority = 1 - ($nb / ($total + 1));
+            $alea = 1 + (rand(-10, 10)/100);
+            $image->priority_data = $priority * $alea;
+            $image->save();
+        }
+        
     }
 }

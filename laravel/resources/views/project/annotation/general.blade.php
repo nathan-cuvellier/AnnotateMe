@@ -39,49 +39,93 @@
 
             <div class="row mt-4">
                 <div class="col-sm" style="width: 500px;height: 350px">
-                    <img class="img-display" style="margin: 0 auto;display: block;"
+                    <img class="img-display rounded" style="margin: 0 auto;display: block;"
                          src="{{ asset('storage/app/datas/' . $pictures[$number]['pathname_data']) }}">
                     <input type="hidden" name="id_data" value="{{ $pictures[$number]['id_data'] }}">
                 </div>
-                <div class="col-sm getH">
 
-                @foreach ($categorys as $category)
-                    <!-- <button type="button" id="answer{{$category->id_cat}}"
-                                class="btn-select btn bg-light py-2 rounded h-32" data-toggle="button"
-                                aria-pressed="false" autocomplete="off">-->
-                        <div class="custom-control custom-checkbox rounded ">
+                <div class="inputs col-sm">
+
+                    @foreach ($categorys as $category)
+                        <div class="stacked custom-control custom-checkbox rounded ">
                             <input type="radio" class="d-none pl-2"
                                    id="customCheck{{$category->id_cat}}" name="category" value="{{$category->id_cat}}">
-                            <label for="customCheck{{$category->id_cat}}" class="w-75 pt-2 pb-2 btn btn-outline-primary">
+                            <label for="customCheck{{$category->id_cat}}" class="btn btn-outline-primary">
                                 {{$category['label_cat']}}
                             </label>
                         </div>
-                        <!--</button>-->
                     @endforeach
 
                 </div>
             </div>
 
-            <div>
-                <!--   <label for="customRange3">Example range</label> -->
-                <h5 class="mt-5 ml-5">Confidence:</h5>
-                <input type="range" class="custom-range testRange " name="expert_sample_confidence_level" min="1"
-                       max="3" step="1" id="customRange3">
-                <input type="submit" name="valider" value="Next" id="next" class="btn btn-primary m-3 text-light">
-                <div class="divDisplay">
-                    <div class=" d-none dd" id="dd1">
-                        Not Confident
-                    </div>
-                    <div class=" d-inline-block dd" id="dd2">
-                        Average
-                    </div>
-                    <div class=" d-none dd" id="dd3">
-                        Really Confident
-                    </div>
+            <div class="container">
+                <div class="row">
+                    <h5 class="col-sm- pt-3">Confidence:</h5>
+                    
+                    <input class="col custom-range testRange" type="range" name="expert_sample_confidence_level" min="1"
+                           max="3" step="1" id="customRange3">
+
+                    <button type="submit" class="btn-block btn btn-lg btn-primary" disabled id="next">Next</button>
+                    
+                    <!--
+                        <div class="divDisplay">
+                            <div class=" d-none dd" id="dd1">
+                                Not Confident
+                            </div>
+                            <div class=" d-inline-block dd" id="dd2">
+                                Average
+                            </div>
+                            <div class=" d-none dd" id="dd3">
+                                Really Confident
+                            </div>
+                        </div>
+                    -->
                 </div>
             </div>
         </div>
     </form>
+    
+    <style type="text/css">
+        .inputs {
+            display: flex;
+            flex-direction: column;
+        }
+        .stacked { 
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+
+            padding: 0px;
+        }
+
+        .stacked label {
+            height: 100%;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2em;
+        }
+    </style>
+
+    <script type="text/javascript">
+    $(document).ready(function(){
+        $('#next').prop('disabled', true);
+
+        $('input').click(function(){
+            if($(this).is(':checked'))
+            {
+                $('#next').prop('disabled', false);
+            }
+            else
+            {
+                $('#next').prop('disabled', true);
+            }
+        });
+    });
+    </script>
 
     <script>
         let range = document.getElementById("customRange3")

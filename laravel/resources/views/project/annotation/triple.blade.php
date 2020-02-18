@@ -1,152 +1,162 @@
+
 @extends('layouts.app')
 
 @section('content')
 
-
-<div class="container">
-    <div class="row">
-       <div class="col">
-          <h2>Project Name</h2>
-      </div>
-
-      <div class="col-md-auto">
-          <p>Annoted: 11</p>
-      </div>
-
-      <div class="col-md-auto">
-          <p>10/43</p>
-      </div>
-  </div>
-
-  <div class="row">
-   <div  class="col-sm-4">
-      <img class="img-fluid rounded" src="https://www.sciencesetavenir.fr/assets/img/2019/04/10/cover-r4x3w1000-5cadebdd93968-trou-noir-galaxie.jpg">
-      <h6 class="text-center">Picture 1</h6>
-  </div>
-
-
- <div  class="col-sm-4">
-      <img class="img-fluid rounded" src="https://www.sciencesetavenir.fr/assets/img/2019/04/10/cover-r4x3w1000-5cadebdd93968-trou-noir-galaxie.jpg">
-      <h6  class="text-center">Picture 2</h6>
-  </div>
-
-  <div  class="col-sm-4">
-      <img class="img-fluid rounded" src="https://www.sciencesetavenir.fr/assets/img/2019/04/10/cover-r4x3w1000-5cadebdd93968-trou-noir-galaxie.jpg">
-      <h6 class="text-center">Picture 3</h6>
-  </div>
-</div>
-
-
-<div  class="col-sm getH">
-  <h5 class="text-center m-3">Which one look like the most similar to the picture n°2 ?</h5>
-        @for($i=1; $i<= 3; $i++)
-        <div class="bg-light m-1 py-2 rounded text-center">
-
-
-          <?php
-          if ($i == 1) {
-            echo "picture ". $i;
-          } else if ($i == 2) {
-            $y = 3;
-             echo "picture ". $y;
-          } else {
-             echo "I don't know";
-          }
-
-
-
-
-          ?>
+    @error('id_data')
+    <div class="container">
+        <div class="d-flex justify-content-center">
+            <div class="alert alert-warning w-50 text-center" role="alert"><b>Error</b></div>
         </div>
-        @endfor
-</div>
+    </div>
+    @enderror
 
-<div>
- <!--   <label for="customRange3">Example range</label> -->
- <a href="https://bootsnipp.com/snippets/Zl6ql">Idée Triple</a>
- <a href="https://bootsnipp.com/snippets/4ak9">Idée 2</a>
+    @error('category')
+    <div class="container">
+        <div class="d-flex justify-content-center">
+            <div class="alert alert-warning w-50 text-center" role="alert"><b>You must select a category</b></div>
+        </div>
+    </div>
+    @enderror
 
- <h5 class="mt-5 ml-5">Your awnser is confident ?</h5>
-   <input type="range" class="custom-range testRange " min="1" max="3" step="1" id="customRange3">
-    <a class="btn btn-primary m-3 text-light">Next</a>
-    <div class="divDisplay">
-       <div class=" d-none dd" id="dd1">Not Confident</div>
-       <div class=" d-inline-block dd" id="dd2">Average</div>
-       <div class=" d-none dd" id="dd3">Really Confident</div>
-   </div>
+    <form method="post" action="{{ route('project.annotate.post', ['id' => $data->id_prj]) }}">
+        @csrf
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <h2>{{ str_replace('_', ' ', $data->name_prj) }}</h2>
+                </div>
 
-   <script>
+                <div class="col-md-auto">
+                    @if(session('annotation')['id_mode'] == 2)
+                        <p>Remains : {{ session('annotation')['nb_annotation_remaining'] }} </p>
+                    @else
+                        <p id="time">Remains : loading...</p>
+                    @endif
 
+                </div>
+            </div>
 
-        let range = document.getElementById("customRange3")
-        let dd1 = document.getElementById("dd1")
-        let dd2 = document.getElementById("dd2")
-        let dd3 = document.getElementById("dd3")
-        let buttons = document.getElementsByClassName("h-32")
+            <div class="row mt-4">
+                <div class="col-sm" >
+                  <h5 class="text-center m-3">Which image look the most similar to this ?</h5>
+                    <img class="img-display rounded" style="margin: 0 auto;display: block;"
+                         src="{{ asset('storage/app/datas/' . $pictures[$number[0]]['pathname_data']) }}">
+                    <input type="hidden" name="id_data" value="{{ $pictures[$number[0]]['id_data'] }}">
+                </div>
 
+                <div class="inputs col-sm">
+                    <div class="stacked custom-control custom-checkbox rounded ">
+                        <input type="radio" class="d-none pl-2"
+                               id="customCheck" name="category" value="{{$categorys[1]->id_cat}}">
+                        <label for="customCheck" class="btn btn-outline-primary">
+                            <img class="img-display rounded" style="max-width: 60%;"
+                     src="{{ asset('storage/app/datas/' . $pictures[$number[1]]['pathname_data']) }}">
+                        </label>
+                    </div>
 
-        console.log(dd1)
-        range.addEventListener("change", function() {
+                    <div class="stacked custom-control custom-checkbox rounded ">
+                        <input type="radio" class="d-none pl-2"
+                               id="customCheck" name="category" value="{{$categorys[2]->id_cat}}">
+                        <label for="customCheck" class="btn btn-outline-primary">
+                            <img class="img-display rounded" style="max-width: 60%;"
+                     src="{{ asset('storage/app/datas/' . $pictures[$number[2]]['pathname_data']) }}">
+                        </label>
+                    </div>
+                </div>
+            </div>
 
+            <div class="container">
+                <div class="row">
+                    <h5 class="col-sm- pt-3">Confidence:</h5>
+                    <input class="col custom-range testRange" type="range" name="expert_sample_confidence_level" min="1" max="3" step="1" id="customRange3">
 
-                if (range.value == 1) {
-                    dd1.classList.remove("d-none");
-                    dd1.classList.add("d-inline-block")
+                    <button type="submit" class="btn-block btn btn-lg btn-primary" id="next">Next</button>
+                </div>
+            </div>
+        </div>
+    </form>
+    
+    <style type="text/css">
+        .inputs {
+            display: flex;
+            flex-direction: column;
+        }
+        .stacked { 
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
 
-                    dd2.classList.add("d-none")
-                    dd2.classList.remove("d-inline-block");
+            padding: 0px;
+        }
 
-                    dd3.classList.add("d-none")
-                    dd3.classList.remove("d-inline-block");
+        .stacked label {
+            height: 100%;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2em;
+        }
+    </style>
 
-                } else if (range.value == 2) {
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function(){
+            let bNext = document.getElementById("next")
+            bNext.disabled = true
 
-                    dd1.classList.add("d-none")
-                    dd1.classList.remove("d-inline-block");
+            let bInputs = document.querySelectorAll(".stacked label")
+            for (let bInput of bInputs) {
 
-                    dd2.classList.add("d-inline-block")
-                    dd2.classList.remove("d-none");
-
-                    dd3.classList.add("d-none")
-                    dd3.classList.remove("d-inline-block");
-
-                } else if (range.value == 3) {
-                    dd1.classList.add("d-none")
-                    dd1.classList.remove("d-inline-block");
-
-                    dd2.classList.add("d-none")
-                    dd2.classList.remove("d-inline-block");
-
-                    dd3.classList.remove("d-none");
-                    dd3.classList.add("d-inline-block")
-                }
-
-
-
-        })
-          let nbButtons = 3
-           for(button of buttons){
-                  button.addEventListener("click",function(){
-                    if (button.classList.contains('activeB')) {
-                      this.classList.remove("activeB");
-                        console.log( button.classList);
-
-                    } else  if (!button.classList.contains('activeB')) {
-
-                      this.classList.add("activeB");
-                        console.log( button.classList);
-
+                bInput.addEventListener("click", function(){
+                    for (let b of bInputs) {
+                        b.classList.add('btn-outline-primary')
+                        b.classList.remove('btn-primary')
                     }
 
-                     nbButtons++
-                  })
-                }
+                    this.classList.remove('btn-outline-primary')
+                    this.classList.add('btn-primary')
 
-   </script>
-</div>
+                    bNext.disabled = false;
+                })
+            }
+        })
+            {{-- If the limit of project is in time --}}
+        @if(session()->has('annotation.time_end_annotation'))
+            let countDown = () => {
+                let date_limit = new Date("{{ session()->get('annotation.time_end_annotation') }}")
 
+                let now = 0
+                let calcDiff = 1
 
+                $.ajax({
+                    url: "{{ asset('date.php') }}",
+                    complete: function (response) {
+                        now = new Date(response.responseText)
 
-</div>
+                        let diff = (date_limit - now) / 1000
+                        let minutes = Math.floor(diff / 60)
+                        diff -= minutes * 60
+                        let secondes = Math.floor(diff)
+                        document.querySelector('#time').innerText = "Remains : " + minutes + ":" + secondes
+                        calcDiff = (date_limit - now) / 1000
+                        if(calcDiff <= 0) {
+                            document.querySelector('#time').innerText = "Elapsed time, last annotation"
+                            clearInterval(idCountDown)
+                        }
+                    },
+                    error: function () {
+                        document.querySelector('#time').innerText = "Remains : Error"
+                    }
+                })
+            }
 
+            countDown()
+
+            let idCountDown = setInterval(countDown, 1000);
+        @endif
+    </script>
 @endsection
+
+<!--

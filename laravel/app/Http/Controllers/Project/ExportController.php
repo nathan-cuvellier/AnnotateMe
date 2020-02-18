@@ -48,6 +48,18 @@ class ExportController extends Controller
             $dataSimple = json_encode($dataSimple);
             return $this->jsonToCsv($dataSimple, "/tmp/data" . date("Ymd-His") . ".csv", true);
         }
+        else
+        {
+             $dataSimple = Annotation::query()
+                ->select("id_exp", "id_cat", "data.id_data", "expert_sample_confidence_level", "data.id_prj")
+                ->join('data', 'annotation.id_data', '=', 'data.id_data')
+                ->where('id_prj', $id)
+                ->get();
+
+            $dataSimple = json_encode($dataSimple);
+            return $this->jsonToCsv($dataSimple, "/tmp/data" . date("Ymd-His") . ".csv", true);
+        }
+
         // elseif ($project->id_int==2) {
         //   $dataDouble = Annotation::query()
         //   ->select("data.id_data1","data.id_data2","id_exp","id_cat","data.id_prj","expert_sample_confidence_level")
@@ -58,16 +70,16 @@ class ExportController extends Controller
         //   $dataDouble = json_encode($dataDouble);
         //   return $this->jsonToCsv($dataDouble, "/tmp/data".date("Ymd-His").".csv",true);
         // }
-        // elseif ($project->id_int==3) {
-        //   $dataTriple = Annotation::query()
-        //   ->select("data.id_data1","data.id_data2","data.id_data3","id_exp","id_cat","data.id_prj","expert_sample_confidence_level")
-        //   ->join('data', 'annotation.id_data', '=', 'data.id_data')
-        //   ->where('id_prj', $id)
-        //   ->get();
-        //
-        //   $dataTriple = json_encode($dataTriple);
-        //   return $this->jsonToCsv($dataTriple, "/tmp/data".date("Ymd-His").".csv",true);
-        // }
+        /*elseif ($project->id_int==3) {
+                $dataTriple = Annotation::query()
+          ->select("data.id_data1","data.id_data2","data.id_data3","id_exp","id_cat","data.id_prj","expert_sample_confidence_level")
+           ->join('data', 'annotation.id_data', '=', 'data.id_data')
+           ->where('id_prj', $id)
+           ->get();
+        
+           $dataTriple = json_encode($dataTriple);
+           return $this->jsonToCsv($dataTriple, "/tmp/data".date("Ymd-His").".csv",true);
+        }*/
     }
 
     function jsonToCsv($json, $csvFilePath = false, $boolOutputFile = false)
