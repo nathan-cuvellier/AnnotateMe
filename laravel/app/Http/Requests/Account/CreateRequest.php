@@ -36,7 +36,7 @@ class CreateRequest extends FormRequest
             'mail_exp' => 'required|email|max:50|unique:expert,mail_exp',
             'tel_exp' => 'required|max:50|unique:expert,tel_exp',
             'city_exp' => 'required|max:50',
-            'pwd_exp' => 'required|confirmed',
+            'pwd_exp' => 'required|confirmed|min:3',
         ];
     }
 

@@ -429,6 +429,7 @@ class CreateController extends Controller
             }
         }
 
+
         //dd($nbLineCount);
         if ($nbLineCount <=1 )
         {
@@ -436,16 +437,22 @@ class CreateController extends Controller
         }
 
         if ($projecttype == '1') {
+
             //Insert  every line of the categories file in the database
             foreach ($lines as $line_num => $line) {
 
                 $cleanLine = preg_replace('/[^A-Za-z0-9 ]/', '', $line);
-                Category::create([
-                    'label_cat' => $cleanLine,
-                    'id_prj' => $prj->id_prj,
-                    'num_line' => $line_num,
-                ]);
+
+                if (strlen($cleanLine) < 450)
+                {
+                    Category::create([
+                        'label_cat' => $cleanLine,
+                        'id_prj' => $prj->id_prj,
+                        'num_line' => $line_num,
+                    ]);
+                }
             }
+
         } else if ($projecttype == '2') {
             Category::create(['label_cat' => 'Yes', 'id_prj' => $prj->id_prj, 'num_line' => 1]);
             Category::create(['label_cat' => 'No', 'id_prj' => $prj->id_prj, 'num_line' => 2]);

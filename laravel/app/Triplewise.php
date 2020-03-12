@@ -19,5 +19,6 @@ class Triplewise extends Model
         'id_data3',
         'date',
         'id_cat',
+        'expert_sample_confidence_level',
     ];
 }

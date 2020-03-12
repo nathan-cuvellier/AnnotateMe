@@ -47,7 +47,7 @@ class UpdateController extends Controller
      */
     public function update($id, UpdateRequest $request)
     {
-        $expert = Expert::find($id);
+        $expert = Expert::findOrFail($id);
         $data = $request->except('_token');
 
         if(!isset($data['pwd_exp']))

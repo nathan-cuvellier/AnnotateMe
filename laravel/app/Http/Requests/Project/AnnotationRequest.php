@@ -4,6 +4,8 @@ namespace App\Http\Requests\Project;
 
 use App\Data;
 use App\Category;
+use App\ConfidenceInterval;
+use App\Project;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
 
@@ -28,6 +30,8 @@ class AnnotationRequest extends FormRequest
      */
     public function rules(Request $request)
     {
+        $project = Project::query()->where('id_prj', $this->route('id'))->first();
+
         $reqCategory = Category::query()
             ->select('id_cat')
             ->where('id_prj', $this->route('id'))
@@ -46,12 +50,30 @@ class AnnotationRequest extends FormRequest
             return $v['id_data'];
         }, $reqData->toArray());
 
-        //dd(in_array($request->category, $categoriesId));
+        $idValideConfidenceLevel = (int) $request->expert_sample_confidence_level;
 
-        return [
+        $reqConfidencesLevel = ConfidenceInterval::query()
+                ->select('id_confidence_interval')
+                ->get();
+
+        $ConfidencesLevelId = array_map(function($v) {
+            return $v['id_confidence_interval'];
+        }, $reqConfidencesLevel->toArray());
+
+        $rules = [
             'category' => 'required|in:'. implode(',', $categoriesId),
-            'id_data' => 'required|in:' . implode(',', $datasId),
-            'expert_sample_confidence_level' => 'required|min:1|max:3',
+            'expert_sample_confidence_level' => 'required',
         ];
+
+        if($project->id_int == 1) {
+            $rules['id_data'] =  'required|in:' . implode(',', $datasId);
+        } else if($project->id_int == 2 /*|| $project->id_int == 3*/) {
+            $rules['id_data1'] =  'required|in:' . implode(',', $datasId);
+            $rules['id_data2'] =  'required|in:' . implode(',', $datasId);
+        }/* else if($project->id_int == 3) {
+            $rules['id_data3'] =  'required|in:' . implode(',', $datasId);
+        }*/
+
+        return $rules;
     }
 }

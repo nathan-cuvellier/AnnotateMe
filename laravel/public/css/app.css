@@ -17,26 +17,44 @@
 
 /* Modify slider thumb */
 .testRange::-webkit-slider-thumb {
+
+
     -webkit-appearance: none;
     border: 1px solid #000000;
     height: 20px;
+    background-color: white;
     margin-top: -10px;
     width: 20px;
     border-radius: 50px;
-    background: #F8F9FA;
+    /* background: #F8F9FA; */
     cursor: pointer;
     box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d; /* Add cool effects to your sliders! */
+    animation: slider 32s infinite;
+}
+
+.categories-buttons {
+    max-height: 400px;
+    overflow-y: auto;
+    max-width: 550px;
+    overflow-x: hidden;
+}
+
+@keyframes slider  {
+	0%, 20%, 100%	{ background: "red";}
+	25%, 45%		{ background: "red"; }
+	50%, 70%		{ background: "red"; }
+	75%, 95%		{background: "red"; }
 }
 /* Modify slider track */
 .testRange::-webkit-slider-runnable-track {
     width: 90%;
-    height: 2px;
+    height: 5px;
     cursor: pointer;
-
-    background: black;
+    background: linear-gradient(to right,red,yellow, green);
     border-radius: 5px;
     border: 0.2px solid #010101;
 }
+
 /* Modify the element who is arround the comment (not confident, average..) */
 .divDisplay {
     width: 90%;

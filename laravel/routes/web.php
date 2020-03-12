@@ -22,12 +22,22 @@ Route::get('/login', 'Auth\LoginController@show')->name('auth.login');
 Route::post('/login', 'Auth\LoginController@check');
 Route::post('/logout', 'Auth\LogoutController@logout')->name('auth.logout');
 
-
+Route::group(['prefix' => 'mail'], function () {
+    Route::get('/reset_password', function(){
+        return view('mail.reset_password');
+    })->name('mail.reset_password');
+});
 
 Route::group(['prefix' => 'account'], function () {
 
     //Route for the list of Experts
     Route::get('/list', 'Account\ListController@list')->name('account.list');
+
+    Route::get('/reset', 'Account\ResetController@view')->name('account.reset');
+    Route::post('/reset', 'Account\ResetController@post');
+
+    Route::get('/reset/token', 'Account\ResetController@resetView')->name('account.reset.token');
+    Route::post('/reset/token', 'Account\ResetController@resetPost');
 
     Route::get('/create', 'Account\CRUD\CreateController@show')->name('account.create');
     Route::post('/create', 'Account\CRUD\CreateController@register');
