@@ -32,7 +32,7 @@ class ExportController extends Controller
             ->where('id_prj', $id)
             ->first();
 
-        if(is_null($project))
+        if (is_null($project))
             return abort(404);
 
         if (session('expert')['id'] != $project->id_exp && session('expert')['type'] != "superadmin")
@@ -47,39 +47,26 @@ class ExportController extends Controller
 
             $dataSimple = json_encode($dataSimple);
             return $this->jsonToCsv($dataSimple, "/tmp/data" . date("Ymd-His") . ".csv", true);
-        }
-        else
-        {
-             $dataSimple = Annotation::query()
-                ->select("id_exp", "id_cat", "data.id_data", "expert_sample_confidence_level", "data.id_prj")
-                ->join('data', 'annotation.id_data', '=', 'data.id_data')
+        } elseif ($project->id_int == 2) {
+            $dataDouble = Pairwise::query()
+                ->select("id_data1", "id_data2", "id_exp", "id_cat", "data.id_prj"/*, "expert_sample_confidence_level"*/)
+                ->join('data', 'pairwise.id_data1', '=', 'data.id_data')
                 ->where('id_prj', $id)
                 ->get();
 
-            $dataSimple = json_encode($dataSimple);
-            return $this->jsonToCsv($dataSimple, "/tmp/data" . date("Ymd-His") . ".csv", true);
+            $dataDouble = json_encode($dataDouble);
+            return $this->jsonToCsv($dataDouble, "/tmp/data" . date("Ymd-His") . ".csv", true);
         }
-
-        // elseif ($project->id_int==2) {
-        //   $dataDouble = Annotation::query()
-        //   ->select("data.id_data1","data.id_data2","id_exp","id_cat","data.id_prj","expert_sample_confidence_level")
-        //   ->join('data', 'annotation.id_data', '=', 'data.id_data')
-        //   ->where('id_prj', $id)
-        //   ->get();
-        //
-        //   $dataDouble = json_encode($dataDouble);
-        //   return $this->jsonToCsv($dataDouble, "/tmp/data".date("Ymd-His").".csv",true);
-        // }
-        /*elseif ($project->id_int==3) {
-                $dataTriple = Annotation::query()
-          ->select("data.id_data1","data.id_data2","data.id_data3","id_exp","id_cat","data.id_prj","expert_sample_confidence_level")
-           ->join('data', 'annotation.id_data', '=', 'data.id_data')
+        elseif ($project->id_int==3) {
+                $dataTriple = Triplewise::query()
+          ->select("id_data1","id_data2","id_data3","id_exp","data.id_prj","expert_sample_confidence_level")
+          ->join('data', 'triplewise.id_data1', '=', 'data.id_data')
            ->where('id_prj', $id)
            ->get();
         
            $dataTriple = json_encode($dataTriple);
            return $this->jsonToCsv($dataTriple, "/tmp/data".date("Ymd-His").".csv",true);
-        }*/
+        }
     }
 
     function jsonToCsv($json, $csvFilePath = false, $boolOutputFile = false)

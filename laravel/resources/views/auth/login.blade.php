@@ -22,6 +22,14 @@
                     </div>
                 @endif
 
+                @if(session('success'))
+                    <div class="alert alert-success" role="alert">
+                        <b>{{ session('success') }}</b>
+                    </div>
+                @endif
+
+                
+
                 <form method="POST" action="{{ route('auth.login') }}">
                     @csrf
 
@@ -49,7 +57,9 @@
                             </span>
                         @enderror
                     </div>
-
+                    <div>
+                        <a href="{{ route('account.reset') }}">forgot password ?</a>
+                    </div>
                     <div class="form-group row">
                         <div class="mx-auto">
                             <button type="submit" class="btn btn-primary">

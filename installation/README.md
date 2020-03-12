@@ -69,7 +69,7 @@ Edit the config file :
 ```sh
 $ nano /etc/apache2/site-available/000-default.conf
 ```
-Replace the default config by this :
+Example of configuration :
 ```
 DocumentRoot /var/www/AnnotateMe/laravel/public
 

@@ -68,7 +68,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="waiting_time_prj" class="col-form-label" title="waiting time between each annotation session of the project">Waiting time (in Minute)</label>
+                    <label for="waiting_time_prj" class="col-form-label" title="waiting time between each annotation session of the project">Waiting time (in Hour)</label>
 
                     <input type="number" min="0" required="required" name="waiting_time_prj" id="waiting_time_prj" value="{{ $project->waiting_time_prj }}" class="form-control @error('waiting_time_prj') is-invalid @enderror" aria-describedby="limitHelpInline">
                     <small id="limitHelpInline" class="text-muted">

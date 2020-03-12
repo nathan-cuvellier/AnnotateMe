@@ -2,7 +2,14 @@
 
 @section('content')
 
-    @error('id_data')
+    @error('id_data1')
+    <div class="container">
+        <div class="d-flex justify-content-center">
+            <div class="alert alert-warning w-50 text-center" role="alert"><b>Error</b></div>
+        </div>
+    </div>
+    @enderror
+    @error('id_data2')
     <div class="container">
         <div class="d-flex justify-content-center">
             <div class="alert alert-warning w-50 text-center" role="alert"><b>Error</b></div>
@@ -24,12 +31,14 @@
             <div class="row">
                 <div class="col">
                     <h2>{{ str_replace('_', ' ', $data->name_prj) }}</h2>
-
-
-
                 </div>
-                <div class="col"><h5>Do this images look like each other ?</h5></div>
-                
+
+
+
+
+
+
+
                 <div class="col-md-auto">
 
                     @if(session('annotation')['id_mode'] == 2)
@@ -45,17 +54,19 @@
                 <div class="col-sm" style="width: 500px;height: 350px">
                     <img class="img-display rounded" style="margin: 0 auto;display: block;"
                          src="{{ asset('storage/app/datas/' . $pictures[$number[0]]['pathname_data']) }}">
-                    <input type="hidden" name="id_data" value="{{ $pictures[$number[0]]['id_data'] }}">
+                    <input type="hidden" name="id_data1" value="{{ $pictures[$number[0]]['id_data'] }}">
                 </div>
 
                 <div class="col-sm" style="width: 500px;height: 350px">
                     <img class="img-display rounded" style="margin: 0 auto;display: block;"
                          src="{{ asset('storage/app/datas/' . $pictures[$number[1]]['pathname_data']) }}">
-                    <input type="hidden" name="id_data" value="{{ $pictures[$number[1]]['id_data'] }}">
+                    <input type="hidden" name="id_data2" value="{{ $pictures[$number[1]]['id_data'] }}">
                 </div>
 
 
                 <div class="inputs col-sm">
+
+                <div><h5>Do these images look like each other ?</h5></div>
                     @foreach ($categorys as $category)
                         <div class="stacked custom-control custom-checkbox rounded ">
                             <input type="radio" class="d-none pl-2"
@@ -67,18 +78,33 @@
                     @endforeach
                 </div>
             </div>
+            <h3>My confidence level :</h3>
 
             <div class="container">
                 <div class="row">
-                    <h5 class="col-sm- pt-3">Confidence:</h5>
-                    <input class="col custom-range testRange" type="range" name="expert_sample_confidence_level" min="1" max="3" step="1" id="customRange3">
-                    <button type="submit" class="btn-block btn btn-lg btn-primary" id="next">Next</button>
+                    <output class="bg-primary text-white mt-3" for="fader" id="output">Confidence:</output>
+                    
+                    <input type="range" id="fader" class="col custom-range testRange mt-3"  
+                    name="expert_sample_confidence_level" min="0" max="300" step="1" 
+                    oninput="outputUpdate(value)" onchange="center(value)">
                 </div>
+
+                <button type="submit" class="mt-3 btn-block btn btn-lg btn-primary" id="next">Next</button>
             </div>
         </div>
     </form>
     
     <style type="text/css">
+
+        #output {
+            margin-right: -15px;
+            width: 180px;
+            border-radius: 20px;
+            padding: 10px;
+            text-align:center;
+            font-size: 1.2em;
+        }
+
         .inputs {
             display: flex;
             flex-direction: column;
@@ -102,6 +128,43 @@
     </style>
 
     <script type="text/javascript">
+        function outputUpdate(vol) {
+            var output = document.querySelector('#output');
+            
+            if (vol > 100 && vol < 200)
+            {           
+                output.value = "Confident"
+            }
+            else if (vol <= 100)
+            {           
+                output.value = "Not Confident"
+            }
+            else
+            {           
+                output.value = "Realy Confident"
+            }
+        }
+        
+        function center(vol) {
+            var output = document.querySelector('#output');
+            var fader = document.querySelector('#fader');
+            
+            if (vol > 100 && vol < 200)
+            {           
+                output.value = "Confident"
+                fader.value = 150;
+            }
+            else if (vol <= 100)
+            {           
+                output.value = "Not Confident"
+                fader.value = 0;
+            }
+            else
+            {           
+                output.value = "Realy Confident"
+                fader.value = 300;
+            }
+        }
 
         document.addEventListener("DOMContentLoaded", function(){
             let bNext = document.getElementById("next")

@@ -14,6 +14,8 @@ use App\Participation;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Session;
 use App\Annotation;
+use App\Pairwise;
+use App\Triplewise;
 use Illuminate\Support\Facades\Redirect;
 
 class AnnotationController extends Controller
@@ -42,14 +44,18 @@ class AnnotationController extends Controller
         if (is_null($data))
             return redirect()->route('project.list')->with('error', 'Error project not found');
 
+        /**
+         * Redirect the user with a message if it is in the "limit_annotation" table and the current date is lower than the date entered in the table
+         * if the user is in the table but the current date is greater than the date entered in the table, the row concerned is deleted
+         */
         if (!is_null($limitAnnotation)) {
             $now = new DateTime();
             $dateLimit = new DateTime($limitAnnotation->date_limit_annotation);
 
             if ($now < $dateLimit) {
-                $date = date('\t\h\e d F \a\t H:i', strtotime($limitAnnotation->date_limit_annotation));
+                $date = date('d F \a\t H:i', strtotime($limitAnnotation->date_limit_annotation));
 
-                return redirect()->route('project.list')->with('warning', 'You can annotate again ' . $date);
+                return redirect()->route('project.list')->with('warning', 'You can annotate again the ' . $date);
             } else {
                 $limitAnnotation->delete();
             }
@@ -120,16 +126,22 @@ class AnnotationController extends Controller
 
             $number = $this->max_img($pictures, 3);
 
+
             foreach ($number as $value)
             {
-                $image_id = $pictures[$value]->id_data;
-                //dd($image_id);
 
+                
+                $image_id = $pictures[$value]->id_data;
+
+
+                //var_dump($image_id);
                 $categorys[] = Category::query()->where(
                     ['category.id_prj' => $id, 'category.label_cat' => $image_id])->first();
+
             }
             $view = 'project.annotation.triple';
         }
+        session()->put('category',$categorys);
 
         return view($view, [
             "data" => $data,
@@ -138,37 +150,6 @@ class AnnotationController extends Controller
             "number_pictures" => $number_pictures,
             "categorys" => $categorys,
         ]);
-
-        //$annotation = ['id_prj' => $data['id_prj'], 'mode' => $data['id_mode'], 'valeur_annotation' => $data['limit_prj'], 'nb_annotation' => 0];
-        /*
-        if ($data->id_int === 1)
-        {
-            $view = 'project.annotation.simple';
-        }
-        else if ($data->id_int === 2)
-        {
-            $view = 'project.annotation.double';
-        }
-        else
-        {
-            $view = 'project.annotation.triple';
-        }
-        */
-
-        //$images = Data::query()->where('id_prj', $id)->get();
-        //$total_nb_annotation = $images->sum('nbannotation_data');
-
-        //$number = $this->max_img($pictures, 3); //$this->max_prop($pictures, 'priority_data');
-
-        /*
-        foreach ($images as $image)
-        {
-            $image->priority_data = ($image->nbannotation_data/ ($total_nb_annotation + 1));
-            $image->save();
-        }
-        */
-
-        
     }
 
     /**
@@ -178,16 +159,74 @@ class AnnotationController extends Controller
      */
     public function annotate(AnnotationRequest $request, $id)
     {
+        $idValideConfidenceLevel = (int) $request->expert_sample_confidence_level;
+
+        if($idValideConfidenceLevel < 150)
+            $idValideConfidenceLevel = 1;
+        else if($idValideConfidenceLevel >= 150 && $idValideConfidenceLevel < 300)
+            $idValideConfidenceLevel = 2;
+        else if($idValideConfidenceLevel >= 300)
+            $idValideConfidenceLevel = 3;
         
-        Annotation::create(
-            [
-                "id_exp" => session('expert')['id'],
-                "id_cat" => $request->category,
-                "id_data" => $request->id_data,
-                "date" => new DateTime(),
-                "expert_sample_confidence_level" => $request->expert_sample_confidence_level
-            ]
-        );
+       
+        $data = Project::query()
+            ->find($id);
+
+            
+
+
+
+        if($data->id_int == 1){
+            Annotation::create(
+                [
+                    "id_exp" => session('expert')['id'],
+                    "id_cat" => $request->category,
+                    "id_data" => $request->id_data,
+                    "date" => new DateTime(),
+                    "expert_sample_confidence_level" => $idValideConfidenceLevel
+                ]
+            );
+    
+        } else if ($data->id_int == 2){
+            Pairwise::create(
+                [
+                    "id_exp" => session('expert')['id'],
+                    "id_cat" => $request->category,
+                    "id_data1" => $request->id_data1,
+                    "id_data2" => $request->id_data2,
+                    "date" => new DateTime(),
+                    "expert_sample_confidence_level" => $idValideConfidenceLevel
+                ]
+            );
+    
+        }else if ($data->id_int == 3){
+            
+            $cat = Category::query()
+            ->find($request->category);
+
+            $category_select = session('category')[1]->label_cat;
+
+            if ($cat->label_cat == $category_select){
+                $third_cat = session('category')[2]->label_cat;
+            } else {
+                $third_cat = session('category')[1]->label_cat;
+            }
+
+
+            Triplewise::create(
+                [
+                    "id_exp" => session('expert')['id'],
+                    "id_data1" => $request->id_data,
+                    "id_data2" => $cat->label_cat,
+                    "id_data3" => $third_cat,
+                    "date" => new DateTime(),
+                    "expert_sample_confidence_level" => $idValideConfidenceLevel
+                ]
+            );
+    
+        }
+        
+
 
         $total_nb_annotation = Data::query()->where('id_prj', $id)->sum('nbannotation_data');
 
@@ -206,30 +245,7 @@ class AnnotationController extends Controller
         if (session('annotation')['id_mode'] == 2)
             session()->put('annotation.nb_annotation_remaining', session('annotation')['nb_annotation_remaining'] - 1);
 
-        if ($project->id_int === 1) {
-            return $this->setLimit($project);
-        }
-        else if ($project->id_int === 2)
-         {
-        }
-        else
-        {
-
-            return $this->setLimit($project);
-        }
-        /*
-        else if (session('data')["id_int"] === 2) {
-            session()->put('annotation', $annotation);
-            return view('project.annotation.double', ["now" => $now, "data" => $data, "pictures" => $pictures]);
-        } else {
-            session()->put('annotation', $annotation);
-            return view('project.annotation.triple', ["now" => $now, "data" => $data, "pictures" => $pictures]);
-        }*/
-
-
-        /*$date = \App\Date::create([
-            "date" => new DateTime(),
-        ]);*/
+        return $this->setLimit($project);
     }
 
     /**
@@ -262,9 +278,9 @@ class AnnotationController extends Controller
             } else {
                 $limitAnnotation->update(['date_limit_annotation' => (new DateTime())->modify("+{$project->waiting_time_prj} hours")]);
             }
-            $dateLimit = ($limitAnnotation->date_limit_annotation)->format('\t\h\e d F \a\t H:i');
+            $dateLimit = ($limitAnnotation->date_limit_annotation)->format('d F \a\t H:i');
 
-            return redirect()->route('project.list')->with('success', 'Thanks for annotation, You can annotate again this project ' . $dateLimit . ' (UTC +1)');
+            return redirect()->route('project.list')->with('success', 'Thanks for annotation, You can annotate again this project the ' . $dateLimit . ' (UTC +1)');
         } else {
             return redirect()->route('project.annotate', compact('id'));
         }
@@ -319,10 +335,13 @@ class AnnotationController extends Controller
 
         foreach ($images as $image)
         {
-            $nb = $image->nbannotation_data;
-            $priority = 1 - ($nb / ($total + 1));
+            $nb_annot = $image->nbannotation_data;
+
+            $priority = 1 - ($nb_annot / ($total + 1));
             $alea = 1 + (rand(-10, 10)/100);
+
             $image->priority_data = $priority * $alea;
+
             $image->save();
         }
         

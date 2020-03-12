@@ -64,7 +64,7 @@
 
                     <div class="form-group">
                         <label id="labelLimitation" for="limit_prj" class="col-form-label">Value of the limitation (in
-                            Minute)</label>
+                            Hour)</label>
 
                         <input id="limit_prj" type="number" class="form-control" name="limit_prj"
                                value="{{ old('limit_prj') }}" min="0" max="3600" required>

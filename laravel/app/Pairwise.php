@@ -18,5 +18,6 @@ class Pairwise extends Model
         'id_data2',
         'date',
         'id_cat',
+        'expert_sample_confidence_level',
     ];
 }
