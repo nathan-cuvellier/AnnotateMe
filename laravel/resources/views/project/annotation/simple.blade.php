@@ -47,7 +47,8 @@
                     <div class="form-group row mb-2">
                         <label for="filter-category" class="col-sm-2 col-form-label">Filter : </label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control border-dark" id="filter-category" placeholder="Search...">
+                            <input type="text" class="form-control border-dark" id="filter-category"
+                                   placeholder="Search...">
                         </div>
                     </div>
                     <div class="categories-buttons" id="presentationCategories">
@@ -152,35 +153,46 @@
 
         document.addEventListener("DOMContentLoaded", function ()
         {
+            /***
+             * Create array with all categories of a project
+             */
             let categories = []
             @foreach ($categorys as $category)
             categories.push({id_cat: {{ $category->id_cat }}, label_cat: '{{ $category->label_cat }}'})
-            @endforeach
+                    @endforeach
 
             let presentationCategories = document.querySelector('#presentationCategories')
             setCategories(presentationCategories, categories)
 
             let inputCategories = document.querySelector('#filter-category')
 
+            // When user write in input filter
             inputCategories.addEventListener('input', (e) =>
             {
                 let filter = categories.filter(element => element.label_cat.toLowerCase().trim().includes(e.target.value.toLowerCase().trim()))
                 let notInFilter = categories.filter(val => !filter.includes(val));
-                for(category of filter)
-                {
-                    document.querySelectorAll('#div' + category.id_cat).forEach((element) => {
+
+                // remove display none if they were already hidden before
+                for (category of filter) {
+                    document.querySelectorAll('#div' + category.id_cat).forEach((element) =>
+                    {
                         element.classList.remove('d-none')
                     })
                 }
 
-                for(category of notInFilter) {
-                    document.querySelectorAll('#div' + category.id_cat).forEach((element) => {
+                // hide category not in the filter
+                for (category of notInFilter) {
+                    document.querySelectorAll('#div' + category.id_cat).forEach((element) =>
+                    {
                         element.classList.add('d-none')
                     })
                 }
 
             })
 
+            /**
+             *  Add outline style CSS
+             */
             let bNext = document.querySelector("#next")
             bNext.disabled = true
 
@@ -202,6 +214,8 @@
             }
 
         })
+
+
                 {{-- If the limit of project is in time --}}
                 @if(session()->has('annotation.time_end_annotation'))
         let countDown = () =>
@@ -211,6 +225,9 @@
                 let now = 0
                 let calcDiff = 1
 
+                /**
+                 *  Get the date thanks to PHP in order to avoid the problem to calcul with the jet lag of the hours of the users
+                 */
                 $.ajax({
                     url: "{{ asset('date.php') }}",
                     complete: function (response)
@@ -220,8 +237,8 @@
                         let diff = (date_limit - now) / 1000
                         let minutes = Math.floor(diff / 60)
                         diff -= minutes * 60
-                        let secondes = Math.floor(diff)
-                        document.querySelector('#time').innerText = "Remains : " + minutes + ":" + secondes
+                        let seconds = Math.floor(diff)
+                        document.querySelector('#time').innerText = "Remains : " + minutes + ":" + seconds
                         calcDiff = (date_limit - now) / 1000
                         if (calcDiff <= 0) {
                             document.querySelector('#time').innerText = "Elapsed time, last annotation"
@@ -241,10 +258,14 @@
 
         @endif
 
+        /**
+         *
+         * @param String divPresentationCategories
+         * @param Array data
+         */
         function setCategories(divPresentationCategories, data)
         {
             divPresentationCategories.innerHTML = '' // remove text loading
-            
 
             for (category of data) {
                 let divParent = e('div', '', divPresentationCategories, 'stacked label custom-control custom-checkbox rounded', 'div' + category.id_cat)
@@ -261,6 +282,16 @@
 
         }
 
+        /**
+         * Create an element HTML
+         * @param {String} tag
+         * @param {String} text
+         * @param {HTMLElement} parent
+         * @param {String} classs
+         * @param {String} id
+         * @param attrs
+         * @returns {HTMLElement}
+         */
         function e(tag, text, parent, classs = null, id = null, attrs = [])
         {
             let o = document.createElement(tag)

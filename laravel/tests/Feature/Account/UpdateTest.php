@@ -17,7 +17,7 @@ class UpdateTest extends TestCase
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * 
+     *
      *
      * @return void
      */
@@ -37,7 +37,7 @@ class UpdateTest extends TestCase
                 'pwd_exp' => Hash::make('123'),
                 'type_exp' => 'expert',
             ]);
-    
+
             $this->get(route('account.update', ['id' => $expert->id_exp]))
                 ->assertRedirect(route('auth.login'));
         } catch(Exception $e) {
@@ -68,7 +68,7 @@ class UpdateTest extends TestCase
                 'pwd_exp' => Hash::make('123'),
                 'type_exp' => 'expert',
             ]);
-    
+
             $this->withSession(['expert' => ['id' => $expert->id_exp, 'type' => $expert->type_exp]])
                 ->get(route('account.update', ['id' => -1]))
                 ->assertForbidden();
@@ -109,7 +109,7 @@ class UpdateTest extends TestCase
                 'pwd_exp' => Hash::make('123'),
                 'type_exp' => 'expert',
             ]);
-    
+
             $this->withSession(['expert' => ['id' => $expert->id_exp, 'type' => $expert->type_exp]])
                 ->get(route('account.update', ['id' => $expert1->id_exp]))
                 ->assertStatus(403);
@@ -137,7 +137,7 @@ class UpdateTest extends TestCase
                 'pwd_exp' => Hash::make('123'),
                 'type_exp' => 'expert',
             ]);
-    
+
             $admin = Expert::create([
                 'name_exp' => 'name',
                 'firstname_exp' => 'firstname',
@@ -151,7 +151,7 @@ class UpdateTest extends TestCase
                 'pwd_exp' => Hash::make('123'),
                 'type_exp' => 'admin',
             ]);
-    
+
             $this->withSession(['expert' => ['id' => $expert->id_exp, 'type' => $expert->type_exp]])
                 ->get(route('account.update', ['id' => $admin->id_exp]))
                 ->assertStatus(403);
@@ -192,7 +192,7 @@ class UpdateTest extends TestCase
                 'pwd_exp' => Hash::make('123'),
                 'type_exp' => 'superadmin',
             ]);
-    
+
             $this->withSession(['expert' => ['id' => $expert->id_exp, 'type' => $expert->type_exp]])
                 ->get(route('account.update', ['id' => $superadmin->id_exp]))
                 ->assertStatus(403);
@@ -238,7 +238,7 @@ class UpdateTest extends TestCase
                 'pwd_exp' => Hash::make('123'),
                 'type_exp' => 'admin',
             ]);
-    
+
             $admin1 = Expert::create([
                 'name_exp' => 'name',
                 'firstname_exp' => 'firstname',
@@ -252,7 +252,7 @@ class UpdateTest extends TestCase
                 'pwd_exp' => Hash::make('123'),
                 'type_exp' => 'admin',
             ]);
-    
+
             $this->withSession(['expert' => ['id' => $admin->id_exp, 'type' => $admin->type_exp]])
                 ->get(route('account.update', ['id' => $admin1->id_exp]))
                 ->assertSessionHas('warning')
