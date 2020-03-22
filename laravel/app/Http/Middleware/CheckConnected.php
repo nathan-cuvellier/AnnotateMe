@@ -32,8 +32,7 @@ class CheckConnected
             route('auth.login'), // need to put in session 'typeExp'
             route('home'), // avoid message "You're not connected" when you want access to the web site => home redirect in login page OR list projects
             route('account.reset'),
-            route('account.reset.token'),
-            route('mail.reset_password')
+            route('account.reset.token')
         ];
     }
 }
