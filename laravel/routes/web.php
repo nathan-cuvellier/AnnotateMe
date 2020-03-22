@@ -22,12 +22,6 @@ Route::get('/login', 'Auth\LoginController@show')->name('auth.login');
 Route::post('/login', 'Auth\LoginController@check');
 Route::post('/logout', 'Auth\LogoutController@logout')->name('auth.logout');
 
-Route::group(['prefix' => 'mail'], function () {
-    Route::get('/reset_password', function(){
-        return view('mail.reset_password');
-    })->name('mail.reset_password');
-});
-
 Route::group(['prefix' => 'account'], function () {
 
     //Route for the list of Experts
