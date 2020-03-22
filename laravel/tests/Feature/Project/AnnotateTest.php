@@ -15,7 +15,7 @@ use Tests\TestCase;
 
 class AnnotateTest extends TestCase
 {
-    
+
     public function testAccessToAnnotatePageWithoutParticipate()
     {
         try {
@@ -32,9 +32,9 @@ class AnnotateTest extends TestCase
                 'pwd_exp' => Hash::make('123'),
                 'type_exp' => 'expert',
             ]);
-    
+
             $project = Project::create([
-                'name_prj' => 'test',
+                'name_prj' => 'phpunit',
                 'desc_prj' => null,
                 'id_mode' => 1,
                 'id_int' => 1,
@@ -60,6 +60,7 @@ class AnnotateTest extends TestCase
                 ->get(route('project.annotate', ['id' => $project->id_prj]))
                 ->assertStatus(403);
         } catch(Exception $e) {
+            echo "\ntestAccessToAnnotatePageWithoutParticipate\n";
             echo $e->getMessage();
         } finally {
             $data->delete();
@@ -85,9 +86,9 @@ class AnnotateTest extends TestCase
                 'pwd_exp' => Hash::make('123'),
                 'type_exp' => 'expert',
             ]);
-    
+
             $project = Project::create([
-                'name_prj' => 'test',
+                'name_prj' => 'phpunit',
                 'desc_prj' => null,
                 'id_mode' => 1,
                 'id_int' => 1,
@@ -131,9 +132,9 @@ class AnnotateTest extends TestCase
                 'pwd_exp' => Hash::make('123'),
                 'type_exp' => 'expert',
             ]);
-    
+
             $project = Project::create([
-                'name_prj' => 'test',
+                'name_prj' => 'phpunit',
                 'desc_prj' => null,
                 'id_mode' => 1,
                 'id_int' => 1,

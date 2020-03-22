@@ -108,29 +108,26 @@ class AnnotationController extends Controller
         }
 
 
-        if ($data->id_int === 1)
-        {
+        if ($data->id_int === 1) {
+            //If the project type is the simple annotation
             $categorys = Category::query()->where('category.id_prj', $id)->get();
             $number = $this->max_img($pictures, 1);
             $view = 'project.annotation.simple';
-        }
-        else if ($data->id_int === 2)
-        {
+        } else if ($data->id_int === 2) {
+            //If the project type is the annotation double
             $categorys = Category::query()->where('category.id_prj', $id)->get();
             $number = $this->max_img($pictures, 2);
             $view = 'project.annotation.double';
-        }
-        else
-        {
+        } else {
+            //If the project type is the annotation triple
             $categorys = [];
 
             $number = $this->max_img($pictures, 3);
 
 
-            foreach ($number as $value)
-            {
+            foreach ($number as $value) {
 
-                
+
                 $image_id = $pictures[$value]->id_data;
 
 
@@ -141,7 +138,7 @@ class AnnotationController extends Controller
             }
             $view = 'project.annotation.triple';
         }
-        session()->put('category',$categorys);
+        session()->put('category', $categorys);
 
         return view($view, [
             "data" => $data,
@@ -153,6 +150,8 @@ class AnnotationController extends Controller
     }
 
     /**
+     * When user click on next annotation
+     *
      * @param AnnotationRequest $request
      * @param $id
      * @return \Illuminate\Http\RedirectResponse
@@ -161,22 +160,21 @@ class AnnotationController extends Controller
     {
         $idValideConfidenceLevel = (int) $request->expert_sample_confidence_level;
 
-        if($idValideConfidenceLevel < 150)
+        /**
+         * In HTML the value of range is between 0 and 300
+         * need to be between 1 and 3 for the database
+         */
+        if ($idValideConfidenceLevel < 150)
             $idValideConfidenceLevel = 1;
-        else if($idValideConfidenceLevel >= 150 && $idValideConfidenceLevel < 300)
+        else if ($idValideConfidenceLevel >= 150 && $idValideConfidenceLevel < 300)
             $idValideConfidenceLevel = 2;
-        else if($idValideConfidenceLevel >= 300)
+        else if ($idValideConfidenceLevel >= 300)
             $idValideConfidenceLevel = 3;
-        
-       
-        $data = Project::query()
-            ->find($id);
-
-            
 
 
+        $project = Project::findOrFail($id);
 
-        if($data->id_int == 1){
+        if ($project->id_int == 1) {
             Annotation::create(
                 [
                     "id_exp" => session('expert')['id'],
@@ -186,8 +184,8 @@ class AnnotationController extends Controller
                     "expert_sample_confidence_level" => $idValideConfidenceLevel
                 ]
             );
-    
-        } else if ($data->id_int == 2){
+
+        } else if ($project->id_int == 2) {
             Pairwise::create(
                 [
                     "id_exp" => session('expert')['id'],
@@ -198,15 +196,15 @@ class AnnotationController extends Controller
                     "expert_sample_confidence_level" => $idValideConfidenceLevel
                 ]
             );
-    
-        }else if ($data->id_int == 3){
-            
+
+        } else if ($project->id_int == 3) {
+
             $cat = Category::query()
-            ->find($request->category);
+                ->find($request->category);
 
             $category_select = session('category')[1]->label_cat;
 
-            if ($cat->label_cat == $category_select){
+            if ($cat->label_cat == $category_select) {
                 $third_cat = session('category')[2]->label_cat;
             } else {
                 $third_cat = session('category')[1]->label_cat;
@@ -223,24 +221,20 @@ class AnnotationController extends Controller
                     "expert_sample_confidence_level" => $idValideConfidenceLevel
                 ]
             );
-    
-        }
-        
 
+        }
 
         $total_nb_annotation = Data::query()->where('id_prj', $id)->sum('nbannotation_data');
 
         $image = Data::find($request->id_data);
 
-        if($image) {
+        if ($image) {
             $image->nbannotation_data = $image->nbannotation_data + 1;
             //$image->priority_data = ($image->nbannotation_data/ ($total_nb_annotation + 1));
             $image->save();
         }
 
         $this->set_priority($id);
-
-        $project = Project::findOrFail($id);
 
         if (session('annotation')['id_mode'] == 2)
             session()->put('annotation.nb_annotation_remaining', session('annotation')['nb_annotation_remaining'] - 1);
@@ -249,11 +243,10 @@ class AnnotationController extends Controller
     }
 
     /**
-     * setLimit
+     * Redirect for a new annotation or redirect to the project list if the user has reached the limit defined in the project
      *
-     * @param  mixed $project
-     *
-     * @return void
+     * @param Project $project
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function setLimit(Project $project)
     {
@@ -281,20 +274,28 @@ class AnnotationController extends Controller
             $dateLimit = ($limitAnnotation->date_limit_annotation)->format('d F \a\t H:i');
 
             return redirect()->route('project.list')->with('success', 'Thanks for annotation, You can annotate again this project the ' . $dateLimit . ' (UTC +1)');
-        } else {
-            return redirect()->route('project.annotate', compact('id'));
         }
+
+        return redirect()->route('project.annotate', compact('id'));
     }
 
-    public function max_prop($array, $prop) {
+    /**
+     * max_prop
+     *
+     * Goes searching trought the array of object given in parameters for the min of the property.
+     *
+     * @param array of object $array
+     * @param property of object $prop
+     * @return int $id_min
+     */
+    public function max_prop($array, $prop)
+    {
         $min = 0;
         $id_min = 0;
 
-        foreach($array as $key => $value)
-        {
+        foreach ($array as $key => $value) {
             $temp = $value->$prop;
-            if ($temp >= $min)
-            {
+            if ($temp >= $min) {
                 $id_min = $key;
                 $min = $temp;
             }
@@ -302,24 +303,30 @@ class AnnotationController extends Controller
         return $id_min;
     }
 
+    /**
+     * max_prop
+     *
+     * Goes searching trought the array of images given in parameters for the min priority and return an array of $nb images.
+     *
+     * @param array of images $array
+     * @param number of images returned $nb
+     * @return array of int $id_min
+     */
     public function max_img($images, $nb = 1)
     {
         $min = [];
         $id_min = [];
 
-        for ($i=0; $i < $nb; $i++)
-        {
+        for ($i = 0; $i < $nb; $i++) {
             $min[] = 0;
             $id_min[] = 0;
         }
 
-        foreach ($images as $k => $v)
-        {
+        foreach ($images as $k => $v) {
             $prio = $v->priority_data;
             $min_prio_id = array_search(min($min), $min);
 
-            if ($prio > $min[$min_prio_id])
-            {
+            if ($prio > $min[$min_prio_id]) {
                 $min[$min_prio_id] = $prio;
                 $id_min[$min_prio_id] = $k;
             }
@@ -328,22 +335,33 @@ class AnnotationController extends Controller
         return $id_min;
     }
 
-    public function set_priority($id) {
+    /**
+     * max_prop
+     *
+     * Recalculate the prioruty of the image, the current function is :
+     * 1 - (nb of annotation on this image / (total number of annotations in this project + 1)) * 1 + (random between -0.1 and 0.1)
+     * the random function is very usefull, if permit to don't have to annotate the same images again and again.
+     * If you want to change the function, edit the $priority variable.
+     *
+     * @param int id of the image $id
+     * @return void
+     */
+    public function set_priority($id)
+    {
 
         $images = Data::query()->where('id_prj', $id)->get();
         $total = $images->sum('nbannotation_data');
 
-        foreach ($images as $image)
-        {
+        foreach ($images as $image) {
             $nb_annot = $image->nbannotation_data;
 
             $priority = 1 - ($nb_annot / ($total + 1));
-            $alea = 1 + (rand(-10, 10)/100);
+            $alea = 1 + (rand(-10, 10) / 100);
 
             $image->priority_data = $priority * $alea;
 
             $image->save();
         }
-        
+
     }
 }

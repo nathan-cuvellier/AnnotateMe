@@ -67,12 +67,10 @@ class AnnotationRequest extends FormRequest
 
         if($project->id_int == 1) {
             $rules['id_data'] =  'required|in:' . implode(',', $datasId);
-        } else if($project->id_int == 2 /*|| $project->id_int == 3*/) {
+        } else if($project->id_int == 2) {
             $rules['id_data1'] =  'required|in:' . implode(',', $datasId);
             $rules['id_data2'] =  'required|in:' . implode(',', $datasId);
-        }/* else if($project->id_int == 3) {
-            $rules['id_data3'] =  'required|in:' . implode(',', $datasId);
-        }*/
+        }
 
         return $rules;
     }

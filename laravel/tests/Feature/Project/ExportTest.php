@@ -35,7 +35,7 @@ class ExportTest extends TestCase
             ]);
     
             $project = Project::create([
-                'name_prj' => 'test',
+                'name_prj' => 'phpunit',
                 'desc_prj' => null,
                 'id_mode' => 1,
                 'id_int' => 1,
