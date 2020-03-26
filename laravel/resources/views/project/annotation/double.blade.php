@@ -33,12 +33,6 @@
                     <h2>{{ str_replace('_', ' ', $data->name_prj) }}</h2>
                 </div>
 
-
-
-
-
-
-
                 <div class="col-md-auto">
 
                     @if(session('annotation')['id_mode'] == 2)
@@ -50,23 +44,23 @@
                 </div>
             </div>
 
-            <div class="row mt-4">
-                <div class="col-sm" style="width: 500px;height: 350px">
+            <div class="row mt-4 mb-5">
+                <div class="col-sm-12 col-md-6" style="width: 500px;height: 350px">
                     <img class="img-display rounded" style="margin: 0 auto;display: block;"
                          src="{{ asset('storage/app/datas/' . $pictures[$number[0]]['pathname_data']) }}">
                     <input type="hidden" name="id_data1" value="{{ $pictures[$number[0]]['id_data'] }}">
                 </div>
 
-                <div class="col-sm" style="width: 500px;height: 350px">
+                <div class="col-sm-12 col-md-6 mt-sm-5 mt-md-0" style="width: 500px;height: 350px">
                     <img class="img-display rounded" style="margin: 0 auto;display: block;"
                          src="{{ asset('storage/app/datas/' . $pictures[$number[1]]['pathname_data']) }}">
                     <input type="hidden" name="id_data2" value="{{ $pictures[$number[1]]['id_data'] }}">
                 </div>
 
 
-                <div class="inputs col-sm">
+                <div class="inputs col-sm mt-5">
 
-                <div><h5>Do these images look like each other ?</h5></div>
+                    <h5>Do these images look like each other ?</h5>
                     @foreach ($categorys as $category)
                         <div class="stacked custom-control custom-checkbox rounded ">
                             <input type="radio" class="d-none pl-2"
@@ -78,14 +72,14 @@
                     @endforeach
                 </div>
             </div>
-            <h3>My confidence level :</h3>
 
-            <div class="container">
+
+            <div class="container mt-5">
+            <h3>My confidence level :</h3>
                 <div class="row">
                     <output class="bg-primary text-white mt-3" for="fader" id="output">Confidence:</output>
-                    
-                    <input type="range" id="fader" class="col custom-range testRange mt-3"  
-                    name="expert_sample_confidence_level" min="0" max="300" step="1" 
+                    <input type="range" id="fader" class="col custom-range testRange mt-3"
+                    name="expert_sample_confidence_level" min="0" max="300" step="1"
                     oninput="outputUpdate(value)" onchange="center(value)">
                 </div>
 
@@ -93,7 +87,7 @@
             </div>
         </div>
     </form>
-    
+
     <style type="text/css">
 
         #output {
@@ -109,7 +103,7 @@
             display: flex;
             flex-direction: column;
         }
-        .stacked { 
+        .stacked {
             flex: 1;
             display: flex;
             justify-content: center;
@@ -223,87 +217,4 @@
             let idCountDown = setInterval(countDown, 1000);
         @endif
     </script>
-    <!--
-    $(document).ready(function(){
-        $('#next').prop('disabled', true);
-
-        $('input').click(function(){
-            if($(this).is(':checked'))
-            {
-                $('#next').prop('disabled', false);
-            }
-            else
-            {
-                $('#next').prop('disabled', true);
-            }
-        });
-    });
-    </script>
-
-    <script>
-        let range = document.getElementById("customRange3")
-        let dd1 = document.getElementById("dd1")
-        let dd2 = document.getElementById("dd2")
-        let dd3 = document.getElementById("dd3")
-        let buttons = document.getElementsByClassName("h-32")
-        let divButton = document.getElementsByClassName("getH")
-
-        range.addEventListener("change", function () {
-
-            if (range.value == 1) {
-                dd1.classList.remove("d-none");
-                dd1.classList.add("d-inline-block")
-
-                dd2.classList.add("d-none")
-                dd2.classList.remove("d-inline-block");
-
-                dd3.classList.add("d-none")
-                dd3.classList.remove("d-inline-block");
-            } else if (range.value == 2) {
-                dd1.classList.add("d-none")
-                dd1.classList.remove("d-inline-block");
-
-                dd2.classList.add("d-inline-block")
-                dd2.classList.remove("d-none");
-
-                dd3.classList.add("d-none")
-                dd3.classList.remove("d-inline-block");
-            } else if (range.value == 3) {
-                dd1.classList.add("d-none")
-                dd1.classList.remove("d-inline-block");
-
-                dd2.classList.add("d-none")
-                dd2.classList.remove("d-inline-block");
-
-                dd3.classList.remove("d-none");
-                dd3.classList.add("d-inline-block")
-            }
-
-        })
-
-        let nbButtons = 3
-        for (button of buttons) {
-            button.addEventListener("click", function () {
-                this.classList.add("activeB")
-                nbButtons++
-            })
-        }
-        
-
-    <script>
-        let heightButtons = 100 / nbButtons + "%"
-        let lis = document.querySelectorAll('[for^="customCheck"]')
-        console.log(lis)
-        lis.forEach((category) => {
-            category.addEventListener('click', () => {
-                lis.forEach((category) => {
-                    category.classList.add('btn-outline-primary')
-                    category.classList.remove('btn-primary')
-                })
-                category.classList.remove('btn-outline-primary')
-                category.classList.add('btn-primary')
-            })
-        })
-    </script>
--->
 @endsection
