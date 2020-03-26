@@ -194,7 +194,7 @@ class CreateController extends Controller
             //Use the prepareFile function
             //It return true if the project file have no errors 
             //Else, it return the error message
-            $prepareFile = $this->prepareFile($pathtoproject);
+            $prepareFile = $this->prepareFile($pathtoproject, $prj);
 
             //If the function find an error
             if ($prepareFile != true) {
@@ -209,8 +209,9 @@ class CreateController extends Controller
             //Use the createdata function to insert the path to the images in the database
             $createdataserror = $this->createdata($pathtoproject, $prj);
 
+
             //If there is a problem while creating the datas in the database
-            if ($createdataserror != true) {
+            if ($createdataserror !== true) {
                 //Delete the project storage directory
                 system("rm " . $pathtoproject);
 
@@ -240,7 +241,7 @@ class CreateController extends Controller
     }
 
     //Prepare the datas in the project folder and check if there is no problem during the process
-    public function prepareFile($pathtoproject)
+    public function prepareFile($pathtoproject, $prj)
     {
         //Use the getDirContent to extract images in /images and the categories.txt to the root
         $files = $this->getDirContents($pathtoproject);
@@ -292,9 +293,10 @@ class CreateController extends Controller
             }
         }
 
-        if (!file_exists($pathtoproject . "/categories.txt")) {
+        if ($prj->id_int === 1 && !file_exists($pathtoproject . "/categories.txt")) {
             return "Error, no categories.txt file in the .zip";
         }
+
 
         $imagesFiles = scandir($pathtoproject . "/images");
         $imagesFilesCount = 0;
@@ -310,7 +312,11 @@ class CreateController extends Controller
 
         //Delete the files in the directory exept the categories.txt file and the images folder
         $files = scandir($pathtoproject);
-        $exept = ['.', '..', 'images', 'categories.txt'];
+        $exept = ['.', '..', 'images'];
+
+        if($prj->id_int === 1)
+            $exept[] = 'categories.txt';
+
         foreach ($files as $key => $value) {
             if (!in_array($value, $exept)) {
                 system("rm -R" . $pathtoproject . '/' . $value);
@@ -346,7 +352,6 @@ class CreateController extends Controller
      */
     public function createdata($pathtoproject, $prj)
     {
-
         $extentions = ['jpg', 'jpeg', 'png', 'gif'];
         $pathimages = $pathtoproject . "/images";
 
@@ -357,23 +362,27 @@ class CreateController extends Controller
         //Get the array of files
         $files = array_slice(scandir($pathimages), 2);
         $count = 0;
-
         foreach ($files as $key => $value) {
-
             if (strstr($value, ".") != false) {
-
                 $extention = strtolower(str_replace('.', '', substr($value, strrpos($value, '.'))));
+                //dd($pathimages.'/'.$value);
 
                 if (in_array($extention, $extentions) != false) {
+                    $newname = $this->randomString(64);
+                    $pathnewimage = __DIR__."/../../../../../public/storage/app/datas/".$prj->name_prj."/images/";
+                    rename($pathnewimage.$value, $pathnewimage.$newname.'.'.$extention);
+                        
+                    //rename($pathimages.'/'.$value, $pathimages.'/'.$newname.'.'.$extention);
                     $count = $count + 1;
                 }
-
             }
         }
 
-        if ($count === 0) {
+        if ($count == 0) {
             return "Error, there is no images that can be used in this .zip";
         }
+
+        $files = array_slice(scandir($pathimages), 2);
 
         foreach ($files as $key => $value) {
 
@@ -406,37 +415,37 @@ class CreateController extends Controller
     {
         $projecttype = $prj->id_int;
 
-        //Path to the config file
-        $pathconfig = $pathtoproject . "/categories.txt";
-
-        //Lines in the categories file
-        if (!file_exists($pathconfig)) {
-            return "Error categories.txt don't exist";
-        }
-
-        $lines = file($pathconfig);
-
-        if ($lines == false) {
-            return "Error, categories.txt cannot be empty";
-        }
-
-        $nbLineCount = 0;
-        foreach ($lines as $line_num => $line) {
-            $cleanLine = preg_replace('/[^A-Za-z0-9 ]/', '', $line);
-            if ($cleanLine != " ")
-            {
-                $nbLineCount++;
-            }
-        }
-
-
-        //dd($nbLineCount);
-        if ($nbLineCount <=1 )
-        {
-            return "Error, categories.txt must have at least 2 lines";
-        }
-
         if ($projecttype == '1') {
+
+            //Path to the config file
+            $pathconfig = $pathtoproject . "/categories.txt";
+
+            //Lines in the categories file
+            if (!file_exists($pathconfig)) {
+                return "Error categories.txt don't exist";
+            }
+
+            $lines = file($pathconfig);
+
+            if ($lines == false) {
+                return "Error, categories.txt cannot be empty";
+            }
+
+            $nbLineCount = 0;
+            foreach ($lines as $line_num => $line) {
+                $cleanLine = preg_replace('/[^A-Za-z0-9 ]/', '', $line);
+                if ($cleanLine != " ")
+                {
+                    $nbLineCount++;
+                }
+            }
+
+
+            //dd($nbLineCount);
+            if ($nbLineCount <=1 )
+            {
+                return "Error, categories.txt must have at least 2 lines";
+            }
 
             //Insert  every line of the categories file in the database
             foreach ($lines as $line_num => $line) {

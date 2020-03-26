@@ -20,13 +20,12 @@ class CreateAnnotationTable extends Migration
             $table->integer('id_exp');
             $table->integer('id_cat');
             $table->integer('id_data');
-            $table->date('date');
+            $table->dateTime('date');
             $table->integer('expert_sample_confidence_level')->nullable();
 
             $table->foreign('id_exp')->references('id_exp')->on('expert');
             $table->foreign('id_cat')->references('id_cat')->on('category');
             $table->foreign('id_data')->references('id_data')->on('data');
-            $table->foreign('date')->references('date')->on('date');
             $table->foreign('expert_sample_confidence_level')->references('id_confidence_interval')->on('confidence_interval');
             
         });

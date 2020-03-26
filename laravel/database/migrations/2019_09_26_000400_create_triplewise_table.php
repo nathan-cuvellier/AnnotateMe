@@ -19,14 +19,13 @@ class CreateTriplewiseTable extends Migration
             $table->integer('id_data1');
             $table->integer('id_data2');
             $table->integer('id_data3');
-            $table->date('date')->nullable();
+            $table->dateTime('date')->nullable();
             $table->integer('id_cat')->nullable();
 
             $table->foreign('id_exp')->references('id_exp')->on('expert');
             $table->foreign('id_data1')->references('id_data')->on('data');
             $table->foreign('id_data2')->references('id_data')->on('data');
             $table->foreign('id_data3')->references('id_data')->on('data');
-            $table->foreign('date')->references('date')->on('date');
             $table->foreign('id_cat')->references('id_cat')->on('category');
         });
     }

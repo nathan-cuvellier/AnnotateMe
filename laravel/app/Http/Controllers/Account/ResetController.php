@@ -42,6 +42,9 @@ class ResetController extends Controller
      */
     public function post(ResetRequest $request)
     {
+        if(session()->has('expert'))
+            return redirect()->route('project.list');
+
         $expert = Expert::query()->where('mail_exp', $request->mail_exp)->first();
 
         if (!is_null($expert)) {
@@ -55,8 +58,8 @@ class ResetController extends Controller
                 'created_at' => new DateTime()
             ]);
 
-            Mail::send(['mail.reset_password', 'mail.reset_password_text'], ['expert' => $expert, 'passwordResets' => $passwordResets], function ($message) {
-                $message->to('nathan@gmail.com')->subject('Password reset - AnnotateMe');
+            Mail::send(['mail.reset_password', 'mail.reset_password_text'], ['expert' => $expert, 'passwordResets' => $passwordResets, 'DURATION_TOKEN' => self::$DURATION_TOKEN], function ($message) use ($expert){
+                $message->to($expert->mail_exp)->subject('Password reset - AnnotateMe');
             });
         }
 
@@ -71,6 +74,9 @@ class ResetController extends Controller
      */
     public function resetView(Request $request)
     {
+        if(session()->has('expert'))
+            return redirect()->route('project.list');
+
         if (!$this->hasValidQuery($request))
             return view('account.reset_token', ['error' => $this->getErrorMessage()]);
 
@@ -89,6 +95,9 @@ class ResetController extends Controller
      */
     public function resetPost(ResetTokenRequest $request)
     {
+        if(session()->has('expert'))
+            return redirect()->route('project.list');
+
         if (!$this->hasValidQuery($request))
             return view('account.reset_token', ['error' => $this->getErrorMessage()]);
 

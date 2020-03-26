@@ -39,8 +39,9 @@
     <h2>Hi {{ ucfirst($expert->firstname_exp) }} {{ strtoupper($expert->name_exp) }},</h2>
     <div>
         <p>Your recently requested to reset your password. Click the button below to reset it.</p>
+        <p>This link is available for {{ $DURATION_TOKEN }} minutes</p>
         <div class="flex flex-center">
-            <a href="http://annotateme.fr/account/reset/token?k={{ $passwordResets->token }}&id_exp={{ $passwordResets->id_exp }}" class="btn">Reset your password</a>
+            <a href="{{ route('account.reset.token') }}?k={{ $passwordResets->token }}&id_exp={{ $passwordResets->id_exp }}" class="btn">Reset your password</a>
         </div>
     </div>
 

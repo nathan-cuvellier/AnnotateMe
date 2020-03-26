@@ -5,7 +5,7 @@
         <div class="row justify-content-center">
             <div class="col-md-4">
 
-                <div class="text-center m-5">
+                <div class="text-center my-5">
                     <h2 class="">Welcome !</h2>
                     <p>Please login to your account</p>
                 </div>
