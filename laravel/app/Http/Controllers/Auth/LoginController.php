@@ -16,6 +16,9 @@ class LoginController extends Controller
      */
     public function show()
     {
+        if(session()->has('expert'))
+            return redirect()->route('project.list');
+
         return view('auth.login');
     }
 
@@ -28,6 +31,9 @@ class LoginController extends Controller
      */
     public function check(LoginRequest $request)
     {
+        if(session()->has('expert'))
+            return redirect()->route('project.list');
+
         $errorMessage = "Wrong Password or Email";
         $expert = Expert::where('mail_exp', $request->mail_exp)->first();
 

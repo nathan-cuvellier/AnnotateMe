@@ -10,8 +10,10 @@ use App\InterfaceMode;
 use App\LimitAnnotation;
 use App\Participation;
 use App\Annotation;
+use App\Pairwise;
 use App\Project;
 use App\SessionMode;
+use App\Triplewise;
 use Illuminate\Http\Request;
 
 class DeleteController extends Controller
@@ -42,17 +44,43 @@ class DeleteController extends Controller
             ->where('id_prj', $id)
             ->get()
             ->toArray();
-
+            
         $datas = Data::query()
             ->select('id_data')
             ->where('id_prj', $id)
             ->get()
             ->toArray();
 
-        Annotation::query()
-            ->whereIn('id_cat', $categories)
-            ->whereIn('id_data', $datas)
-            ->delete();
+        $int = Project::query()
+            ->where('id_prj', $id)
+            ->first();
+
+   
+
+        if ($int->id_int == 1) {
+
+            Annotation::query()
+                ->whereIn('id_cat', $categories)
+                ->whereIn('id_data', $datas)
+                ->delete();
+
+        } elseif ($project->id_int == 2) {
+
+            Pairwise::query()
+                ->whereIn('id_cat', $categories)
+                ->whereIn('id_data1', $datas)
+                ->whereIn('id_data2', $datas)
+                ->delete();
+        }
+        elseif ($project->id_int==3) {
+            Triplewise::query()
+                ->whereIn('id_data1', $datas)
+                ->whereIn('id_data2', $datas)
+                ->whereIn('id_data3', $datas)
+                ->delete();
+        }
+
+
 
         Data::query()
             ->where('id_prj', $id)
@@ -72,9 +100,7 @@ class DeleteController extends Controller
 
 
         $project = Project::findOrFail($id);
-        system('rm -rf ' . __DIR__ . '/../../../../public/storage/app/datas/' . str_replace(' ', '\ ', $project->name_prj));
-        //dd(glob(__DIR__ . '/../../../../public/storage/app/datas/'.$project->name_prj.'/*'));
-        //rmdir(__DIR__ . '/../../../../public/storage/app/datas/'. $project->name_prj);
+        system('rm -rf ' . __DIR__ . '/../../../../../public/storage/app/datas/' . $project->name_prj);
 
         $project->delete();
 

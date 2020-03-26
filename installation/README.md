@@ -83,27 +83,22 @@ DocumentRoot /var/www/AnnotateMe/laravel/public
 ### Install web site
 ```
 $ cd /var/www
-$ sudo mkdir AnnotateMe
+$ git clone origin https://github.com/AnnotateMe/AnnotateMe.git
 $ cd AnnotateMe
-$ sudo git init
-$ sudo git remote add origin https://github.com/AnnotateMe/AnnotateMe.git
-$ sudo git fetch origin master
-$ sudo git pull origin master
-$ cd installation
-$ chmod +x setup.sh
-$ ./setup.sh
+$ chmod +x installation/setup.sh
+$ ./installation/setup.sh
 ```
 
-### :warning: Create database before this commande and write the name of database in .env file in laravel folder
+### :warning: Create database before this commande and change information in .env file in laravel folder
 ```
-$ cd ../laravel
+$ cd laravel
 $ php artisan migrate
 ```
 # Optional
 
 ### Tests PHPUnit
 
-If you want to check that the whole installation is done correctly, you can perform the tests in laravel directory, with the following command:
+If you want to check that the whole installation is done correctly, you can perform the tests in laravel directory, with the following command :
 
   
 

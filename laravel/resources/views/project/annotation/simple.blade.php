@@ -116,6 +116,9 @@
             align-items: center;
             font-size: 1.2em;
         }
+        .img-display {
+            min-height: 500px;
+        }
     </style>
 
     <script type="text/javascript">

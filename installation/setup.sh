@@ -2,8 +2,8 @@
 
 cd laravel/
 composer install
-chmod -R 770 storage bootstrap/cache
-chown -R $USER:www-data storage bootstrap/cache
+chmod -R 770 storage bootstrap
+chown -R $USER:www-data storage bootstrap
 
 cp ../installation/.env .env #change database
 
