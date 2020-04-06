@@ -39,4 +39,4 @@
 ### Mail
 ![home](https://raw.githubusercontent.com/nathan-cuvellier/AnnotateME/vola/doc/img-readme/mail.PNG)!
 
-![home](https://raw.githubusercontent.com/nathan-cuvellier/AnnotateME/vola/doc/img-readme/reset_password)
+![home](https://raw.githubusercontent.com/nathan-cuvellier/AnnotateME/vola/doc/img-readme/reset_password.PNG)
